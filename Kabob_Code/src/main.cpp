@@ -14,9 +14,28 @@ int outputPinB2 = 12;
 int state = HIGH; //low is bwds, high is fwds
 
 
-IntervalTimer pin_timer;
-volatile unsigned int motor_running;
-volatile unsigned int pin_state;
+/*----------------------------Module Function Prototypes------------*/
+void checkGlobalEvents(void);
+void handleMoveForward(void);
+void handleMoveBackward(void);
+//void handleRightTurn(void);
+//void handleLeftTurn(void);
+
+void setPWM(double duty_cycle, uint8_t right_motor);
+
+/*---------------State Definitions--------------------------*/
+typedef enum {
+  STATE_IDLE, STATE_FORWARD, STATE_BACKWARD
+} States_t;
+
+/*---------------Module Variables---------------------------*/
+States_t state;
+
+IntervalTimer left_pwm_timer;
+IntervalTimer right_pwm_timer;
+volatile unsigned int left_motor_state;
+volatile unsigned int right_motor_state;
+
 unsigned long previous_millis; 
 static double duty_cycle;
 static double off_time;
@@ -38,11 +57,16 @@ void setup() {
   analogWrite(outputPinF1, LOW);
   analogWrite(outputPinF2, LOW);  
 
+  void SetPWM();
+
+  //timer 
+  previous_millis = millis();
 
   // handle PWM
-  duty_cycle = 0.5;
+  duty_cycle = 0.5 * PWM_CYCLE_LENGTH;
   off_time = PWM_CYCLE_LENGTH - duty_cycle;
-  pin_timer.begin(TogglePin, duty_cycle);
+  left_pwm_timer.begin(SetLeftPWM, duty_cycle);
+  right_pwm_timer.begin(SetRightPWM, duty_cycle);
 
 
 }
