@@ -35,11 +35,20 @@ void loop() {
     analogWrite(outputPinB2, 0);
     analogWrite(servoPin, 50);
   } else if (state == LOW) {
-    analogWrite(outputPinB1, 255); //for now just set to max output
-    analogWrite(outputPinB2, 255);
+    analogWrite(outputPinB1, 0); //for now just set to max output, state low is not moving
+    analogWrite(outputPinB2, 0);
     analogWrite(outputPinF1, 0);
     analogWrite(outputPinF2, 0);
     analogWrite(servoPin, 0);
+  }
+  if (Serial.available() >= 1) {
+     if (state == HIGH) {
+       state=LOW;
+     } else if (state == LOW) {
+       state = HIGH;
+     }
+   Serial.read();
+   Serial.println(state);
   }
 }
   
