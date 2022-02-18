@@ -1,88 +1,161 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <AccelStepper.h>
+#include <Servo.h>
 
-#define PWM_FREQUENCY               490 // hz
+#define PRINT_FREQUENCY                 1 // hz
 #define MILLISECONDS(time)({time * 1000;})
-#define MICROSECONDS(time)({time * 1000000;})
-#define PWM_CYCLE_LENGTH            MICROSECONDS((float)1/PWM_FREQUENCY)
 
-int outputPinF1 = 3; 
-int outputPinB1 = 4;  
-int outputPinF2 = 11;
-int outputPinB2 = 12;
-int state = HIGH; //low is bwds, high is fwds
+#define F1_PIN  3
+#define B1_PIN  4  
+#define F2_PIN  9
+#define B2_PIN  10
+#define SERVO_PIN 6
 
+#define OPEN_CLAW_ANGLE 170
+#define CLOSE_CLAW_ANGLE 50
 
-/*----------------------------Module Function Prototypes------------*/
+/*----------------------------Function Prototypes------------*/
+void initializePins(void);
 void checkGlobalEvents(void);
 void handleMoveForward(void);
 void handleMoveBackward(void);
-//void handleRightTurn(void);
-//void handleLeftTurn(void);
-
-void setPWM(double duty_cycle, uint8_t right_motor);
+uint8_t TestForKey(void);
+void RespToKey(void);
+void handleRightTurn(void);
+void handleLeftTurn(void);
+void stop(void);
+void forward(void);
 
 /*---------------State Definitions--------------------------*/
 typedef enum {
-  STATE_IDLE, STATE_FORWARD, STATE_BACKWARD
+  STATE_IDLE, STATE_LOAD, STATE_NAV_TARGET, STATE_UNLOAD, STATE_NAV_LOAD
 } States_t;
 
 /*---------------Module Variables---------------------------*/
 States_t state;
 
-IntervalTimer left_pwm_timer;
-IntervalTimer right_pwm_timer;
-volatile unsigned int left_motor_state;
-volatile unsigned int right_motor_state;
-
-unsigned long previous_millis; 
-static double duty_cycle;
-static double off_time;
+Servo myservo;
+unsigned long state_time;
+unsigned long serial_time; 
+uint8_t servoPin = 6;
+uint8_t servoPos = 0;
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  Serial.println("Hello, world!");
+  initializePins();
 
-  // Initialize pins
-  //pinMode(inputPin, INPUT);
-  pinMode(outputPinF1,OUTPUT);
-  pinMode(outputPinB1,OUTPUT);
-  pinMode(outputPinF2,OUTPUT);
-  pinMode(outputPinB2,OUTPUT);
-  // Set all pins to low to start
-  analogWrite(outputPinB1, LOW);
-  analogWrite(outputPinB2, LOW);
-  analogWrite(outputPinF1, LOW);
-  analogWrite(outputPinF2, LOW);  
-
-  void SetPWM();
+  // What does this do @Darcy?
+  analogWrite(SERVO_PIN, LOW);
 
   //timer 
-  previous_millis = millis();
+  serial_time = millis();
+  state_time = millis();
 
-  // handle PWM
-  duty_cycle = 0.5 * PWM_CYCLE_LENGTH;
-  off_time = PWM_CYCLE_LENGTH - duty_cycle;
-  left_pwm_timer.begin(SetLeftPWM, duty_cycle);
-  right_pwm_timer.begin(SetRightPWM, duty_cycle);
-
-
+  state = STATE_IDLE;
+  
+  //servo init
+  myservo.attach(SERVO_PIN);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if (state == HIGH) {
-    analogWrite(outputPinF1, 255); //for now just set to max output
-    analogWrite(outputPinF2, 255);
-    analogWrite(outputPinB1, 0);
-    analogWrite(outputPinB2, 0);
-  } else if (state == LOW) {
-    analogWrite(outputPinB1, 255); //for now just set to max output
-    analogWrite(outputPinB2, 255);
-    analogWrite(outputPinF1, 0);
-    analogWrite(outputPinF2, 0);
+  checkGlobalEvents();
+
+  switch(state) {
+    case STATE_IDLE:
+      stop();
+      break;
+    case STATE_LOAD:
+      forward(100);
+      if (state_time - millis() > 5000) {
+        state_time = millis();
+        state = STATE_NAV_TARGET;
+      }
+      break;
+    case STATE_NAV_TARGET:
+      forward(100);
+      if (state_time - millis() > 5000) {
+        state_time = millis();
+        state = STATE_IDLE;
+      }
+      break;
+    case STATE_UNLOAD:
+      backward(100);
+      break;
+    case STATE_NAV_LOAD:
+      break;
+    default:
+      Serial.println("What is this I do not even...");
+  }
+
+  unsigned long current_millis = millis();
+  if (current_millis - serial_time > MILLISECONDS(1/PRINT_FREQUENCY) ){
+    Serial.println("One Secound update: ");
+    serial_time = current_millis;
   }
 }
+
+void initializePins(void) {
+  pinMode(F1_PIN, OUTPUT);
+  pinMode(B1_PIN, OUTPUT);
+  pinMode(F2_PIN, OUTPUT);
+  pinMode(B2_PIN, OUTPUT);
+  pinMode(SERVO_PIN, OUTPUT);
+}
+
+void stop(void) {
+  analogWrite(F1_PIN, 0);
+  analogWrite(F2_PIN, 0); 
+  analogWrite(B1_PIN, 0);
+  analogWrite(B2_PIN, 0);
+}
+
+void forward(uint8_t speed) {
+  analogWrite(F1_PIN, speed);
+  analogWrite(F2_PIN, speed); 
+  analogWrite(B1_PIN, 0);
+  analogWrite(B2_PIN, 0);
+}
+
+void backward(uint8_t speed) {
+  analogWrite(F1_PIN, 0);
+  analogWrite(F2_PIN, 0); 
+  analogWrite(B1_PIN, speed);
+  analogWrite(B2_PIN, speed);
+}
+
+void openClaw(void) {
+  myservo.write(OPEN_CLAW_ANGLE);
+}
+
+void closeClaw(void) {
+  myservo.write(CLOSE_CLAW_ANGLE);
+}
+
+void checkGlobalEvents(void) {
+  if (TestForKey()) RespToKey();
+}
   
+uint8_t TestForKey(void) {
+  uint8_t KeyEventOccurred;
+  KeyEventOccurred = Serial.available();
+  return KeyEventOccurred;
+}
+
+void RespToKey(void) {
+  uint8_t theKey;
+  theKey = Serial.read();
+  Serial.print(theKey);
+  Serial.print(", ASCII=");
+  Serial.println(theKey, HEX);
+
+  switch(theKey) {
+    case 0x20:
+      state = STATE_IDLE;
+      break;
+    default:
+      break;
+  }
+}
