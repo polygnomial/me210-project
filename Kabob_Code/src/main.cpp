@@ -113,6 +113,17 @@ void handleNavTargetState(void){
   if (millis() - state_time> 5000) {
     changeStateTo(STATE_IDLE);
   }
+  if (Serial.available() >= 1) {
+     if (state == HIGH) {
+       state=LOW;
+     } else if (state == LOW) {
+       state = HIGH;
+     }
+   Serial.read();
+   Serial.println(state);
+  }
+  myservo.write(170);                  // sets the servo position according to the scaled value
+  delay(15);         
 }
 
 void changeStateTo(States_t s) {
