@@ -15,6 +15,11 @@
 #define OPEN_CLAW_ANGLE 170
 #define CLOSE_CLAW_ANGLE 50
 
+/*---------------State Definitions--------------------------*/
+typedef enum {
+  STATE_IDLE, STATE_LOAD, STATE_NAV_TARGET, STATE_UNLOAD, STATE_NAV_LOAD
+} States_t;
+
 /*----------------------------Function Prototypes------------*/
 void initializePins(void);
 void checkGlobalEvents(void);
@@ -25,12 +30,14 @@ void RespToKey(void);
 void handleRightTurn(void);
 void handleLeftTurn(void);
 void stop(void);
-void forward(void);
+void forward(uint8_t);
+void backward(uint8_t);
+void handleLoadState(void);
+void handleNavTargetState(void);
+void closeClaw(void);
+void openClaw(void);
+void changeStateTo(States_t);
 
-/*---------------State Definitions--------------------------*/
-typedef enum {
-  STATE_IDLE, STATE_LOAD, STATE_NAV_TARGET, STATE_UNLOAD, STATE_NAV_LOAD
-} States_t;
 
 /*---------------Module Variables---------------------------*/
 States_t state;
@@ -53,7 +60,7 @@ void setup() {
   serial_time = millis();
   state_time = millis();
 
-  state = STATE_IDLE;
+  state = STATE_LOAD;
   
   //servo init
   myservo.attach(SERVO_PIN);
@@ -68,18 +75,10 @@ void loop() {
       stop();
       break;
     case STATE_LOAD:
-      forward(100);
-      if (state_time - millis() > 5000) {
-        state_time = millis();
-        state = STATE_NAV_TARGET;
-      }
+      handleLoadState();
       break;
     case STATE_NAV_TARGET:
-      forward(100);
-      if (state_time - millis() > 5000) {
-        state_time = millis();
-        state = STATE_IDLE;
-      }
+      handleNavTargetState();
       break;
     case STATE_UNLOAD:
       backward(100);
@@ -95,6 +94,31 @@ void loop() {
     Serial.println("One Secound update: ");
     serial_time = current_millis;
   }
+
+}
+
+void handleLoadState(void) {
+  int timeInState = millis() - state_time;
+  if (timeInState < 1500) {
+    openClaw();
+  } else if (timeInState > 3000 && timeInState < 5000) {
+    closeClaw();
+  } else if (timeInState > 5000) {
+    changeStateTo(STATE_NAV_TARGET);
+  }
+}
+
+void handleNavTargetState(void){
+  forward(200);
+  if (millis() - state_time> 5000) {
+    changeStateTo(STATE_IDLE);
+  }
+}
+
+void changeStateTo(States_t s) {
+  state = s;
+  state_time = millis();
+  Serial.println("New state = " + s);
 }
 
 void initializePins(void) {
