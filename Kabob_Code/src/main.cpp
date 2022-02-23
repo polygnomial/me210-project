@@ -12,8 +12,8 @@
 #define B2_PIN  10
 #define SERVO_PIN 6
 
-#define OPEN_CLAW_ANGLE 170
-#define CLOSE_CLAW_ANGLE 50
+#define OPEN_CLAW_ANGLE 35 // need a process for finding these, I found by trial and error
+#define CLOSE_CLAW_ANGLE 65
 
 /*---------------State Definitions--------------------------*/
 typedef enum {
