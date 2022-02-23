@@ -62,7 +62,7 @@ void setup() {
 
   state = STATE_LOAD;
   
-  //servo init
+  //servo init - this is dumb
   myservo.attach(SERVO_PIN);
 }
 
