@@ -3,7 +3,7 @@
 
 LineSensor::LineSensor(int pin)
 {  
-  pin = pin;
+  LineSensor::pin = pin;
   pinMode(pin, INPUT);
 }
 
@@ -22,4 +22,16 @@ int LineSensor::read()
   else{
     return 1;
   }
+}
+
+int LineSensor::readAnalog()
+{
+  int value = analogRead(pin);
+
+  return value;
+}
+
+int LineSensor::getPin()
+{
+  return pin;
 }

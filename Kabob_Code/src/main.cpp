@@ -39,15 +39,12 @@ void setup() {
   serial_time = millis();
   state_time = millis();
 
-  state = STATE_LOAD;
+  state = STATE_IDLE;
   
   Serial.println("Setup Complete!");
 }
 
 void loop() {
-  Serial.println(shephard.sensors.line.left.read());
-  delay(100);
-  // put your main code here, to run repeatedly:
   checkGlobalEvents();
 
   switch(state) {
@@ -72,6 +69,11 @@ void loop() {
   unsigned long current_millis = millis();
   if (current_millis - serial_time > MILLISECONDS(1/PRINT_FREQUENCY) ){
     Serial.println("One Secound update: ");
+    Serial.println("left " + String(shephard.sensors.line.left.readAnalog()));
+    Serial.println("right " + String(shephard.sensors.line.right.readAnalog()));
+    Serial.println("center left " + String(shephard.sensors.line.center_left.readAnalog()));
+    Serial.println("center middle " + String(shephard.sensors.line.center_middle.readAnalog()));
+    Serial.println("center right " + String(shephard.sensors.line.center_right.readAnalog()));
     serial_time = current_millis;
   }
 
@@ -119,7 +121,7 @@ void RespToKey(void) {
   Serial.println(theKey, HEX);
 
   switch(theKey) {
-    case ' ': // makes more sense than 0x20
+    case ' ': 
       state = STATE_IDLE;
       break;
     default:
