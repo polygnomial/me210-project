@@ -45,9 +45,6 @@ void setup() {
 }
 
 void loop() {
-  //Serial.println(shephard.sensors.line.left.read());
-  delay(100);
-  // put your main code here, to run repeatedly:
   checkGlobalEvents();
 
   switch(state) {
