@@ -1,19 +1,9 @@
 #include <Arduino.h>
 #include <Wire.h>
-#include <AccelStepper.h>
-#include <Servo.h>
+#include "System.h"
 
 #define PRINT_FREQUENCY                 1 // hz
 #define MILLISECONDS(time)({time * 1000;})
-
-#define F1_PIN  3
-#define B1_PIN  4  
-#define F2_PIN  9
-#define B2_PIN  10
-#define SERVO_PIN 6
-
-#define OPEN_CLAW_ANGLE 35 // need a process for finding these, I found by trial and error
-#define CLOSE_CLAW_ANGLE 65
 
 /*---------------State Definitions--------------------------*/
 typedef enum {
@@ -21,7 +11,6 @@ typedef enum {
 } States_t;
 
 /*----------------------------Function Prototypes------------*/
-void initializePins(void);
 void checkGlobalEvents(void);
 void handleMoveForward(void);
 void handleMoveBackward(void);
@@ -29,20 +18,13 @@ uint8_t TestForKey(void);
 void RespToKey(void);
 void handleRightTurn(void);
 void handleLeftTurn(void);
-void stop(void);
-void forward(uint8_t);
-void backward(uint8_t);
 void handleLoadState(void);
 void handleNavTargetState(void);
-void closeClaw(void);
-void openClaw(void);
 void changeStateTo(States_t);
-
 
 /*---------------Module Variables---------------------------*/
 States_t state;
 
-Servo myservo;
 unsigned long state_time;
 unsigned long serial_time; 
 uint8_t servoPin = 6;
@@ -51,10 +33,7 @@ uint8_t servoPos = 0;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  initializePins();
-
-  // What does this do @Darcy?
-  analogWrite(SERVO_PIN, LOW);
+  while(!Serial);
 
   //timer 
   serial_time = millis();
@@ -62,17 +41,18 @@ void setup() {
 
   state = STATE_LOAD;
   
-  //servo init - this is dumb
-  myservo.attach(SERVO_PIN);
+  Serial.println("Setup Complete!");
 }
 
 void loop() {
+  Serial.println(shephard.sensors.line.left.read());
+  delay(100);
   // put your main code here, to run repeatedly:
   checkGlobalEvents();
 
   switch(state) {
     case STATE_IDLE:
-      stop();
+      shephard.chassis.stop();
       break;
     case STATE_LOAD:
       handleLoadState();
@@ -81,7 +61,7 @@ void loop() {
       handleNavTargetState();
       break;
     case STATE_UNLOAD:
-      backward(100);
+      shephard.chassis.backward(100);
       break;
     case STATE_NAV_LOAD:
       break;
@@ -100,16 +80,16 @@ void loop() {
 void handleLoadState(void) {
   int timeInState = millis() - state_time;
   if (timeInState < 1500) {
-    openClaw();
+    shephard.claw.open(); 
   } else if (timeInState > 3000 && timeInState < 5000) {
-    closeClaw();
+    shephard.claw.close(); 
   } else if (timeInState > 5000) {
     changeStateTo(STATE_NAV_TARGET);
   }
 }
 
 void handleNavTargetState(void){
-  forward(200);
+  shephard.chassis.forward(200);
   if (millis() - state_time> 5000) {
     changeStateTo(STATE_IDLE);
   }       
@@ -119,43 +99,6 @@ void changeStateTo(States_t s) {
   state = s;
   state_time = millis();
   Serial.println("New state = " + s);
-}
-
-void initializePins(void) {
-  pinMode(F1_PIN, OUTPUT);
-  pinMode(B1_PIN, OUTPUT);
-  pinMode(F2_PIN, OUTPUT);
-  pinMode(B2_PIN, OUTPUT);
-  pinMode(SERVO_PIN, OUTPUT);
-}
-
-void stop(void) {
-  analogWrite(F1_PIN, 0);
-  analogWrite(F2_PIN, 0); 
-  analogWrite(B1_PIN, 0);
-  analogWrite(B2_PIN, 0);
-}
-
-void forward(uint8_t speed) {
-  analogWrite(F1_PIN, speed);
-  analogWrite(F2_PIN, speed); 
-  analogWrite(B1_PIN, 0);
-  analogWrite(B2_PIN, 0);
-}
-
-void backward(uint8_t speed) {
-  analogWrite(F1_PIN, 0);
-  analogWrite(F2_PIN, 0); 
-  analogWrite(B1_PIN, speed);
-  analogWrite(B2_PIN, speed);
-}
-
-void openClaw(void) {
-  myservo.write(OPEN_CLAW_ANGLE);
-}
-
-void closeClaw(void) {
-  myservo.write(CLOSE_CLAW_ANGLE);
 }
 
 void checkGlobalEvents(void) {
@@ -176,7 +119,7 @@ void RespToKey(void) {
   Serial.println(theKey, HEX);
 
   switch(theKey) {
-    case 0x20:
+    case ' ': // makes more sense than 0x20
       state = STATE_IDLE;
       break;
     default:
