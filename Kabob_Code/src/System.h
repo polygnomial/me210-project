@@ -16,17 +16,23 @@
 #define OPEN_CLAW_ANGLE 170
 #define CLOSE_CLAW_ANGLE 50
 
+#define LINE_RIGHT 18
+#define LINE_LEFT 14
+#define LINE_CENTER_MIDDLE 15
+#define LINE_CENTER_RIGHT 16
+#define LINE_CENTER_LEFT 17
+
 class System
 {
   public:
     struct Sensors
     {
       struct LineSensors{
-        LineSensor left = LineSensor(15);
-        LineSensor center_middle = LineSensor(15);
-        LineSensor center_left = LineSensor(15);
-        LineSensor center_right = LineSensor(15);
-        LineSensor right = LineSensor(15);
+        LineSensor left = LineSensor(LINE_LEFT);
+        LineSensor center_middle = LineSensor(LINE_CENTER_MIDDLE);
+        LineSensor center_left = LineSensor(LINE_CENTER_LEFT);
+        LineSensor center_right = LineSensor(LINE_CENTER_RIGHT);
+        LineSensor right = LineSensor(LINE_RIGHT);
       };
       LineSensors line;
 
