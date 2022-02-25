@@ -6,10 +6,10 @@
 #include "Actuators/Chassis.h"
 #include "Actuators/Claw.h"
 
-#define F1_PIN  3
-#define B1_PIN  4  
-#define F2_PIN  9
-#define B2_PIN  10
+#define RIGHT_BACKWARD_PIN 3
+#define RIGHT_FORWARD_PIN 4
+#define LEFT_BACKWARD_PIN 9
+#define LEFT_FORWARD_PIN 10
 
 #define SERVO_PIN 6
 
@@ -43,7 +43,10 @@ class System
       UltrasonicSensors ultra;
     };
     Sensors sensors;
-    Chassis chassis = Chassis(F1_PIN, F2_PIN, B1_PIN, B2_PIN);
+    Chassis chassis = Chassis(RIGHT_FORWARD_PIN, 
+                              RIGHT_BACKWARD_PIN, 
+                              LEFT_FORWARD_PIN,
+                              LEFT_BACKWARD_PIN);
     Claw claw = Claw(SERVO_PIN, OPEN_CLAW_ANGLE, CLOSE_CLAW_ANGLE);
 };
 
