@@ -5,6 +5,7 @@
 uint8_t UltrasonicSensor::num_ultrasonic_sensors                = 0;
 UltrasonicSensor* UltrasonicSensor::ultrasonic_sensors[5]       = {NULL};
 volatile int UltrasonicSensor::trigger_time_count               = 0;
+IntervalTimer UltrasonicSensor::timer;
 
 
 void UltrasonicSensor::initialize(){
