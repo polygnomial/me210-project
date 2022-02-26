@@ -2,17 +2,20 @@
 #include "Arduino.h"
 #include "UltrasonicSensor.h"
 
-uint8_t UltrasonicSensor::num_ultrasonic_sensors          = 0;
-volatile int UltrasonicSensor::trigger_time_count         = 0;
+uint8_t UltrasonicSensor::num_ultrasonic_sensors                = 0;
+UltrasonicSensor* UltrasonicSensor::ultrasonic_sensors[5]       = {NULL};
+volatile int UltrasonicSensor::trigger_time_count               = 0;
 
-float UltrasonicSensor::read()
-{
-  return echo_duration / 58;
-}
 
 void UltrasonicSensor::initialize(){
   timer.begin(UltrasonicSensor::timerISR, timer_us);
   attachInterrupt(0, UltrasonicSensor::echo_interrupt, CHANGE); // TODO select interrupt ID better
+}
+
+
+float UltrasonicSensor::read()
+{
+  return echo_duration / 58;
 }
 
 
