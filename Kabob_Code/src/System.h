@@ -22,7 +22,7 @@
 #define LINE_CENTER_RIGHT 16
 #define LINE_CENTER_LEFT 17
 
-class System
+struct System
 {
   public:
     struct Sensors
@@ -50,4 +50,4 @@ class System
     Claw claw = Claw(SERVO_PIN, OPEN_CLAW_ANGLE, CLOSE_CLAW_ANGLE);
 };
 
-System shephard;
+extern struct System shephard;
