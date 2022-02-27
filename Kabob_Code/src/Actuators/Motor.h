@@ -20,18 +20,20 @@ class Motor
       };
     // can optionally add encoder to make fake inertial measured movements
 
-    /* forward and backward take:
-     * angle in degrees
-     * if stop() is called, the Motor will reset its target
-     */
+    
     void activity(void);
 
     void stop(void);
-    void forward(uint32_t angle, uint8_t speed);
-    void backward(uint32_t angle, uint8_t speed);
+    /* cw (clockwise) and ccw (counterclockwise):
+     * angle (degrees)
+     * - clockwise when looking at the motor along the shaft
+     * - if stop() is called, the Motor will reset its target
+     */
+    void cw(uint32_t angle, uint8_t speed);
+    void ccw(uint32_t angle, uint8_t speed);
     
-    void forward_at_speed(uint8_t speed);
-    void backward_at_speed(uint8_t speed);
+    void cw_at_speed(uint8_t speed);
+    void ccw_at_speed(uint8_t speed);
     
     int get_pos(void);
 
@@ -42,8 +44,8 @@ class Motor
     Encoder encoder;
 
     int pos;
-    int target;
-    int overflow;
+    double target;
+    double overflow;
 };
 
 //TODO decide when to reset the counter things
