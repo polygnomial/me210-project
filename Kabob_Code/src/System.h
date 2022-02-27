@@ -27,6 +27,9 @@
 #define LINE_CENTER_RIGHT 16
 #define LINE_CENTER_LEFT 17
 
+#define HUB_TO_HUB_DISTANCE 20 // cm
+#define WHEEL_CIRCUMFERENCE 20 // cm
+
 struct System
 {
   public:
@@ -55,7 +58,9 @@ struct System
                               ENCODER_RIGHT_PIN1,
                               ENCODER_RIGHT_PIN2,
                               ENCODER_LEFT_PIN1,
-                              ENCODER_LEFT_PIN2);
+                              ENCODER_LEFT_PIN2,
+                              HUB_TO_HUB_DISTANCE,
+                              WHEEL_CIRCUMFERENCE);
     Claw claw = Claw(SERVO_PIN, OPEN_CLAW_ANGLE, CLOSE_CLAW_ANGLE);
 
     void activity(void);
