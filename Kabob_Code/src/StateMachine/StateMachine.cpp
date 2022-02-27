@@ -23,6 +23,7 @@ void setup() {
 
 void loop() {
   checkGlobalEvents();
+  shephard.activity();
 
   switch(state) {
     case STATE_IDLE:
