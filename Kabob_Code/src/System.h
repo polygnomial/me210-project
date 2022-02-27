@@ -11,6 +11,11 @@
 #define LEFT_BACKWARD_PIN 9
 #define LEFT_FORWARD_PIN 10
 
+#define ENCODER_RIGHT_PIN1 8
+#define ENCODER_RIGHT_PIN2 11
+#define ENCODER_LEFT_PIN1 5
+#define ENCODER_LEFT_PIN2 7
+
 #define SERVO_PIN 6
 
 #define OPEN_CLAW_ANGLE 170
@@ -46,8 +51,14 @@ struct System
     Chassis chassis = Chassis(RIGHT_FORWARD_PIN, 
                               RIGHT_BACKWARD_PIN, 
                               LEFT_FORWARD_PIN,
-                              LEFT_BACKWARD_PIN);
+                              LEFT_BACKWARD_PIN,
+                              ENCODER_RIGHT_PIN1,
+                              ENCODER_RIGHT_PIN2,
+                              ENCODER_LEFT_PIN1,
+                              ENCODER_LEFT_PIN2);
     Claw claw = Claw(SERVO_PIN, OPEN_CLAW_ANGLE, CLOSE_CLAW_ANGLE);
+
+    void activity(void);
 };
 
 extern struct System shephard;
