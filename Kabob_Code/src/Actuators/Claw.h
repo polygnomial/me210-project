@@ -6,12 +6,18 @@
 class Claw
 {
   public:
-    Claw(unsigned servo_pin, unsigned open_angle, unsigned close_angle);
+    Claw(unsigned servo_pin, unsigned open_angle, unsigned close_angle):
+    open_angle(open_angle),
+    close_angle(close_angle)
+    {
+      pinMode(servo_pin, OUTPUT);
+     analogWrite(servo_pin, LOW);
+     servo.attach(servo_pin);
+    };
     void open(void);
     void close(void);
+    Servo servo;
   private:
-    unsigned servo_pin;
     unsigned open_angle;
     unsigned close_angle;
-    Servo servo;
 };
