@@ -131,3 +131,34 @@ void loop(void){
     motor_r.activity(true);
 }
 ```
+
+## Claw
+
+### With Shephard
+
+```c++
+#include "Test.h"
+#include "System.h"
+
+
+unsigned start;
+
+void setup(){
+    Serial.begin(9600);
+    Serial.println("Currently doing some testing...");
+    delay(1000);
+    start = millis();
+}
+void loop(void){
+    shephard.activity();
+    uint32_t tick = millis();
+    Serial.println(tick);
+    if (tick - 5000 > start){
+        shephard.claw.close();
+    } else if (tick - 4000 > start){
+        shephard.chassis.move_forward(5, 100);
+    } else if (tick - 3000 > start){
+        shephard.claw.open();
+    }
+}
+```
