@@ -18,8 +18,8 @@
 
 #define SERVO_PIN 6
 
-#define OPEN_CLAW_ANGLE 170
-#define CLOSE_CLAW_ANGLE 50
+#define OPEN_CLAW_ANGLE 0
+#define CLOSE_CLAW_ANGLE 70
 
 #define LINE_RIGHT 18
 #define LINE_LEFT 14
