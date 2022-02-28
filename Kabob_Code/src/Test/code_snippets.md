@@ -83,3 +83,51 @@ void loop() {
   }
 }
 ```
+
+## Test Motor Funcionality
+
+### With Motor Class
+
+```c++
+#include "Test.h"
+#include "../Actuators/Motor.h"
+
+#define RIGHT_BACKWARD_PIN 3
+#define RIGHT_FORWARD_PIN 4
+#define LEFT_BACKWARD_PIN 9
+#define LEFT_FORWARD_PIN 10
+
+#define ENCODER_RIGHT_PIN1 8
+#define ENCODER_RIGHT_PIN2 11
+#define ENCODER_LEFT_PIN1 5
+#define ENCODER_LEFT_PIN2 7
+
+Motor motor_l(LEFT_FORWARD_PIN, 
+              LEFT_BACKWARD_PIN,
+              ENCODER_LEFT_PIN1,
+              ENCODER_LEFT_PIN2);
+
+Motor motor_r(RIGHT_FORWARD_PIN, 
+              RIGHT_BACKWARD_PIN,
+              ENCODER_RIGHT_PIN1,
+              ENCODER_RIGHT_PIN2);
+
+int i = 0;
+bool debug = false;
+
+void setup(){
+    Serial.begin(9600);
+    delay(2000);
+    motor_r.ccw(90, 50);
+    motor_l.ccw(90, 50);
+}
+void loop(void){
+    if (i%100000000 == 0){
+        debug  = true;
+    } else {
+        debug = false;
+    }
+    motor_l.activity(true);
+    motor_r.activity(true);
+}
+```

@@ -11,9 +11,11 @@ public:
   Motor(unsigned f_pin,
         unsigned b_pin,
         unsigned e_pin1, // polarity of these does not matter as far as I can tell
-        unsigned e_pin2) : f_pin(f_pin),
-                           b_pin(b_pin),
-                           encoder(e_pin1, e_pin2)
+        unsigned e_pin2,
+        uint8_t min_speed) : f_pin(f_pin),
+                             b_pin(b_pin),
+                             encoder(e_pin1, e_pin2),
+                             min_speed(min_speed)
   {
     pinMode(f_pin, OUTPUT);
     pinMode(b_pin, OUTPUT);
@@ -27,9 +29,10 @@ public:
    * - clockwise when looking at the motor along the shaft
    * - if stop() is called, the Motor will reset its target
    */
-  void cw(uint32_t angle, uint8_t speed);
-  void ccw(uint32_t angle, uint8_t speed);
+  void cw(double angle, uint8_t speed);
+  void ccw(double angle, uint8_t speed);
 
+  void move(double angle, uint8_t speed);
   void cw_at_speed(uint8_t speed);
   void ccw_at_speed(uint8_t speed);
 
@@ -44,4 +47,5 @@ private:
   int pos;
   double target;
   double overflow;
+  uint8_t min_speed;
 };

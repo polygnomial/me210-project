@@ -1,18 +1,18 @@
 #include "Arduino.h"
 #include "Motor.h"
 
-void Motor::activity(void){
-  pos = encoder.read();
-
-    // overflow protection
+void Motor::activity(){
+  pos = abs(encoder.read());
+  
+  // overflow protection
   if (pos > 0xFFFFFF){
-    overflow += encoder.read();
+    overflow +=  abs(encoder.read());
     encoder.write(0);
     pos = 0;
   }
   
   // decide whether to stop
-  if ((pos + overflow ) > target){
+  if ((pos + overflow) > target){
     stop();
   }
 }
@@ -26,19 +26,29 @@ void Motor::stop(void) {
   target = 0;
 }
 
-void Motor::cw(uint32_t angle, uint8_t speed){
-  cw_at_speed(speed);
-  target = pos + angle / 360 * 1920;
+void Motor::move(double angle, uint8_t speed){
+  if (angle > 0){
+    cw_at_speed(speed);
+  } else {
+    ccw_at_speed(speed);
+  }
+  
+  target = abs(pos + angle / 360 * 1920);
+  if (speed < min_speed){
+    speed = min_speed;
+  }
+
   encoder.write(0);
   overflow = 0;
   pos = 0;
 }
 
-void Motor::ccw(uint32_t angle, uint8_t speed){
-  ccw_at_speed(speed);
-  target = pos + angle / 360 * 1920;encoder.write(0);
-  overflow = 0;
-  pos = 0;
+void Motor::cw(double angle, uint8_t speed){
+  move(angle, speed);
+}
+
+void Motor::ccw(double angle, uint8_t speed){
+  move(-angle, speed);
 }
 
 void Motor::cw_at_speed(uint8_t speed) {
