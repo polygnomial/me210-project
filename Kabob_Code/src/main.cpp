@@ -20,6 +20,8 @@ void handleMoveForward(void);
 void handleMoveBackward(void);
 uint8_t TestForKey(void);
 uint8_t TestforT1(void);
+void TestforT2(void);
+void ResptoT2(void);
 void LineFollow(void);
 void RespToKey(void);
 void RespToT1(void);
@@ -43,6 +45,7 @@ uint8_t servoPos = 0;
 
 
 void setup() {
+  delayMicroseconds(2000);
   // put your setup code here, to run once:
   Serial.begin(9600);
   while(!Serial);
@@ -52,6 +55,7 @@ void setup() {
   state_time = millis();
 
   state = STATE_NAV_TARGET;
+  state2 = STATE_1;
   
   Serial.println("Setup Complete!");
 }
@@ -67,7 +71,7 @@ void loop() {
       handleLoadState();
       break;
     case STATE_NAV_TARGET:
-      handleNavTargetState();
+      // handleNavTargetState();
       break;
     case STATE_UNLOAD:
       shephard.chassis.backward(100);
@@ -85,13 +89,15 @@ void loop() {
       }
       break;
     case STATE_2:
-      LineFollow();
+      // LineFollow();
+      // TestforT2();
+      state = STATE_IDLE;
       break;
     case STATE_3:
       handleNavTargetState();
       break;
     case STATE_4:
-      shephard.chassis.backward(100);
+      shephard.chassis.stop();
       break;
     case STATE_wait:
       break;
@@ -153,7 +159,19 @@ uint8_t TestforT1(void) {
  
 void LineFollow(void) {
   analogWrite(3,0);
-  if (shephard.sensors.line.center_middle.readAnalog() > 100) {
+  if (shephard.sensors.line.right.readAnalog() > 900||shephard.sensors.line.left.readAnalog() > 800) {
+    // hole avoidance
+    analogWrite(9,0);
+    analogWrite(4, 0);
+    analogWrite(10, 0); 
+    state = STATE_IDLE;
+    state2=STATE_4;
+  // } else if (shephard.sensors.line.left.readAnalog() > 900) {
+  //   //hole avoidance
+  //   analogWrite(9,0);
+  //   analogWrite(4, 0);
+  //   analogWrite(10, 0); 
+  } else if (shephard.sensors.line.center_middle.readAnalog() > 100) {
     analogWrite(4, 100);
     analogWrite(9,0);
     analogWrite(10, 100); 
@@ -183,16 +201,33 @@ void RespToT1(void) {
 }
 
 //untested
-void turn1sequence() {
-  while (shephard.sensors.line.center_left.readAnalog() < 100) {
+void turn1sequence(void) {
+  while (shephard.sensors.line.left.readAnalog() < 100) {
     LineFollow();
   }
-  while (shephard.sensors.line.center_right.readAnalog() < 100) {
-    //Pivot(); PUT THIS FUNCTION IN
+  while (shephard.sensors.line.right.readAnalog() < 100) {
+    //Pivot(); PUT THIS FUNCTION IN]
+    analogWrite(4, 100);
+    analogWrite(9,100);
+    analogWrite(10,0);
+    analogWrite(3,0);
   }
-  
-
-
+  while (shephard.sensors.line.center_right.readAnalog() < 100 && shephard.sensors.line.center_left.readAnalog() <100 && shephard.sensors.line.center_middle.readAnalog() < 100) {
+    //Pivot(); PUT THIS FUNCTION IN
+    analogWrite(4, 100);
+    analogWrite(9,100);
+    // analogWrite(4, 0);
+    // analogWrite(9,0);
+    analogWrite(3,0);
+    analogWrite(10,0);
+  } 
+  while(shephard.sensors.line.left.readAnalog()<100&&shephard.sensors.line.right.readAnalog()<100) {
+    analogWrite(3, 100);
+    analogWrite(9,100);
+    analogWrite(10, 0);
+    analogWrite(4,0);
+  }
+  LineFollow();
 }
 
 uint8_t TestForKey(void) {
