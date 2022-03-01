@@ -6,8 +6,8 @@
 #include "Actuators/Chassis.h"
 #include "Actuators/Claw.h"
 
-#define RIGHT_BACKWARD_PIN 3
-#define RIGHT_FORWARD_PIN 4
+#define RIGHT_BACKWARD_PIN 4
+#define RIGHT_FORWARD_PIN 3
 #define LEFT_BACKWARD_PIN 10
 #define LEFT_FORWARD_PIN 9
 

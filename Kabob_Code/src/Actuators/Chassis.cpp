@@ -1,12 +1,6 @@
 #include "Arduino.h"
 #include "Chassis.h"
 
-void Chassis::activity(void)
-{
-  right.activity();
-  left.activity();
-}
-
 void Chassis::stop(void)
 {
   left.stop();
