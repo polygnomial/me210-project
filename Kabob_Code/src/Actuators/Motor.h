@@ -14,7 +14,6 @@ public:
     pinMode(b_pin, OUTPUT);
   };
 
-  void activity(void);
   void stop(void);
 
   void cw_at_speed(uint8_t speed);
