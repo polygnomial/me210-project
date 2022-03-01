@@ -29,44 +29,46 @@
 
 #define HUB_TO_HUB_DISTANCE 25.1  // cm
 #define WHEEL_CIRCUMFERENCE 31.33 // cm
-#define MOTOR_MIN_SPEED 55 // Measured with both motors running. 
-                           // If only 1 motor is running the min will be higher
+#define MOTOR_MIN_SPEED 55        // Measured with both motors running.
+                                  // If only 1 motor is running the min will be higher
 
 struct System
 {
-  public:
-    struct Sensors
+public:
+  struct Sensors
+  {
+    struct LineSensors
     {
-      struct LineSensors{
-        LineSensor left = LineSensor(LINE_LEFT);
-        LineSensor center_middle = LineSensor(LINE_CENTER_MIDDLE);
-        LineSensor center_left = LineSensor(LINE_CENTER_LEFT);
-        LineSensor center_right = LineSensor(LINE_CENTER_RIGHT);
-        LineSensor right = LineSensor(LINE_RIGHT);
-      };
-      LineSensors line;
-
-      struct UltrasonicSensors{
-        UltrasonicSensor front = UltrasonicSensor(15);
-        UltrasonicSensor periscope = UltrasonicSensor(15);
-      };
-      UltrasonicSensors ultra;
+      LineSensor left = LineSensor(LINE_LEFT);
+      LineSensor center_middle = LineSensor(LINE_CENTER_MIDDLE);
+      LineSensor center_left = LineSensor(LINE_CENTER_LEFT);
+      LineSensor center_right = LineSensor(LINE_CENTER_RIGHT);
+      LineSensor right = LineSensor(LINE_RIGHT);
     };
-    Sensors sensors;
-    Chassis chassis = Chassis(RIGHT_FORWARD_PIN, 
-                              RIGHT_BACKWARD_PIN, 
-                              LEFT_FORWARD_PIN,
-                              LEFT_BACKWARD_PIN,
-                              ENCODER_RIGHT_PIN1,
-                              ENCODER_RIGHT_PIN2,
-                              ENCODER_LEFT_PIN1,
-                              ENCODER_LEFT_PIN2,
-                              HUB_TO_HUB_DISTANCE,
-                              WHEEL_CIRCUMFERENCE,
-                              MOTOR_MIN_SPEED);
-    Claw claw = Claw(SERVO_PIN, OPEN_CLAW_ANGLE, CLOSE_CLAW_ANGLE);
+    LineSensors line;
 
-    void activity(void);
+    struct UltrasonicSensors
+    {
+      UltrasonicSensor front = UltrasonicSensor(15);
+      UltrasonicSensor periscope = UltrasonicSensor(15);
+    };
+    UltrasonicSensors ultra;
+  };
+  Sensors sensors;
+  Chassis chassis = Chassis(RIGHT_FORWARD_PIN,
+                            RIGHT_BACKWARD_PIN,
+                            LEFT_FORWARD_PIN,
+                            LEFT_BACKWARD_PIN,
+                            ENCODER_RIGHT_PIN1,
+                            ENCODER_RIGHT_PIN2,
+                            ENCODER_LEFT_PIN1,
+                            ENCODER_LEFT_PIN2,
+                            HUB_TO_HUB_DISTANCE,
+                            WHEEL_CIRCUMFERENCE,
+                            MOTOR_MIN_SPEED);
+  Claw claw = Claw(SERVO_PIN, OPEN_CLAW_ANGLE, CLOSE_CLAW_ANGLE);
+
+  void activity(void);
 };
 
 extern struct System shephard;
