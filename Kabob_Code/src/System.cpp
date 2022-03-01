@@ -1,6 +1,7 @@
 #include "System.h"
 
-void System::activity(void){
+void System::activity(void)
+{
     chassis.activity();
 }
 

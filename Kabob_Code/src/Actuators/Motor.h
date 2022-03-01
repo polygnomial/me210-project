@@ -22,5 +22,5 @@ public:
 
 protected:
   unsigned f_pin,
-           b_pin;
+      b_pin;
 };

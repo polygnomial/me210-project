@@ -38,6 +38,9 @@ public:
   void turn_right(uint8_t speed = 50);
   void turn_left(uint8_t speed = 50);
 
+  void veer_forward(uint8_t speed_right, uint8_t speed_left);
+  void veer_backward(uint8_t speed_right, uint8_t speed_left);
+
   /* turn_cw and turn_ccw
    * distance (centimeters)
    * - if stop() is called, the Chassis will reset its target.
