@@ -16,8 +16,8 @@ public:
           unsigned le_pin2,
           double hub_to_hub_distance,
           double wheel_circumference,
-          uint8_t min_speed) : right(rf_pin, rb_pin, re_pin1, re_pin2, min_speed),
-                               left(lf_pin, lb_pin, le_pin1, le_pin2, min_speed),
+          uint8_t min_speed) : right(rf_pin, rb_pin, min_speed),
+                               left(lf_pin, lb_pin, min_speed),
                                chassis_circumference(hub_to_hub_distance * PI),
                                wheel_circumference(wheel_circumference),
                                ninety_degrees(chassis_circumference / 4 / wheel_circumference * 360){};
