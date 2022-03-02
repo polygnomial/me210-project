@@ -4,8 +4,14 @@ States_t state;
 
 unsigned long state_time;
 unsigned long serial_time; 
+unsigned long curr_time;
 uint8_t servoPin = 6;
 uint8_t servoPos = 0;
+
+uint8_t flagLeftLine = 0;
+uint8_t flagRightLine = 0;
+
+unsigned long flag_time;
 
 void setup() {
   // put your setup code here, to run once:
@@ -15,6 +21,8 @@ void setup() {
   //timer 
   serial_time = millis();
   state_time = millis();
+  flag_time = millis();
+  curr_time = millis();
 
   state = STATE_IDLE;
   
@@ -22,8 +30,10 @@ void setup() {
 }
 
 void loop() {
+  curr_time = millis();
   checkGlobalEvents();
   checkLineSensors();
+  checkFlags();
   // shephard.activity();
 
   switch(state) {
@@ -39,7 +49,13 @@ void loop() {
     case STATE_OFF_RIGHT:
       shephard.chassis.veer_forward(250, 180);
       break;
+    case STATE_OFF_SLIGHT_RIGHT:
+      shephard.chassis.veer_forward(250, 180);
+      break;
     case STATE_OFF_LEFT:
+      shephard.chassis.veer_forward(180, 250);
+      break;
+    case STATE_OFF_SLIGHT_LEFT:
       shephard.chassis.veer_forward(180, 250);
       break;
     case STATE_NAV_TARGET:
@@ -86,13 +102,21 @@ void handleNavTargetState(void){
 }
 
 void changeStateTo(States_t s) {
-  state = s;
-  state_time = millis();
-  //Serial.println("New state = " + s);
+  if (s != state) {
+    state = s;
+    state_time = millis();
+  }
 }
 
 void checkGlobalEvents(void) {
   if (TestForKey()) RespToKey();
+}
+
+void checkFlags(void) {
+  if (curr_time - flag_time > FLAG_TIME) {
+    flagLeftLine = 0;
+    flagRightLine = 0;
+  }
 }
 
 void checkLineSensors(void) {
@@ -101,6 +125,7 @@ void checkLineSensors(void) {
     uint8_t center_left = shephard.sensors.line.center_left.read();
     uint8_t center_middle = shephard.sensors.line.center_middle.read();
     uint8_t center_right = shephard.sensors.line.center_right.read();
+    // primary line sensing states
     if (center_middle && !center_right && !center_left){
       changeStateTo(STATE_ON_LINE);
     }
@@ -110,6 +135,14 @@ void checkLineSensors(void) {
     else if (!center_middle && !center_right && center_left) { 
       changeStateTo(STATE_OFF_RIGHT);
     }
+    else if (center_middle && !center_right && center_left) { 
+      changeStateTo(STATE_OFF_SLIGHT_RIGHT);
+    }
+    else if (center_middle && center_right && !center_left) { 
+      changeStateTo(STATE_OFF_SLIGHT_LEFT);
+    }
+    // line divides in map
+    // TO BE IMPLIMENTED HERE USING FLAGS
 }
   
 uint8_t TestForKey(void) {
