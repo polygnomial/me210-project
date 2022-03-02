@@ -111,7 +111,7 @@ void handleNavTargetState(void){
       break;
     case ZONE_4:
       // turn 90 degrees and then line follow
-      if (t < 2500) {
+      if (t < 3000) {
         shephard.chassis.turn_left(200);
       } else {
         lineFollow();
