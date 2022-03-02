@@ -36,7 +36,7 @@ void loop() {
       handleNavTargetState();
       break;
     case STATE_UNLOAD:
-      shephard.chassis.backward_at_speed(100);
+      shephard.chassis.move_backward_at_speed(100);
       break;
     case STATE_NAV_LOAD:
       break;
@@ -69,7 +69,7 @@ void handleLoadState(void) {
 }
 
 void handleNavTargetState(void){
-  shephard.chassis.forward_at_speed(200);
+  shephard.chassis.move_forward_at_speed(200);
   if (millis() - state_time> 5000) {
     changeStateTo(STATE_IDLE);
   }       
