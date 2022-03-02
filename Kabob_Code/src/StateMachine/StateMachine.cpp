@@ -29,6 +29,7 @@ void setup() {
   flag_time = millis();
 
   state = STATE_NAV_TARGET; 
+  zone = ZONE_1;
   
   Serial.println("Setup Complete!");
 }
@@ -37,6 +38,7 @@ void loop() {
   curr_time = millis();
   checkGlobalEvents();
   checkFlags();
+  checkForZoneChange();
   // shephard.activity();
 
   // TO LINE FOLLOW: Must be in state = state_nav_target
@@ -69,7 +71,6 @@ void loop() {
     //Serial.println("center middle " + String(shephard.sensors.line.center_middle.read()));
     //Serial.println("center right " + String(shephard.sensors.line.center_right.read()));
     //Serial.println("---------------");
-    Serial.println("In Zone" + zone);
     serial_time = curr_time;
   }
 }
@@ -89,7 +90,8 @@ void handleNavTargetState(void){
   //shephard.chassis.move_forward_at_speed(200);
   //if (millis() - state_time> 5000){
   //  changeStateTo(STATE_IDLE);
-  //}       
+  //}    
+  unsigned long t = curr_time - zone_time;   
   switch(zone) {
     case ZONE_LOAD:
       break;
@@ -101,14 +103,19 @@ void handleNavTargetState(void){
       break;
     case ZONE_3:
       // turn 90 degrees and then line follow
-      if (curr_time - zone_time < 1000) {
+      if (t > 1000 && t < 5000) {
         shephard.chassis.turn_right(200);
       } else {
         lineFollow();
       }
       break;
     case ZONE_4:
-      // TO IMPLEMENT
+      // turn 90 degrees and then line follow
+      if (t < 2500) {
+        shephard.chassis.turn_left(200);
+      } else {
+        lineFollow();
+      }
       break;
     case ZONE_TARGET:
       // TO IMPLEMENT
@@ -132,6 +139,7 @@ void checkFlags(void) {
 void checkForZoneChange(void) {
     uint8_t left = shephard.sensors.line.left.read();
     uint8_t right = shephard.sensors.line.right.read();
+    //Serial.println(left);
     if (left && zone == ZONE_1) {
       flagLeftLine = true;
       flag_time = millis();
@@ -140,6 +148,8 @@ void checkForZoneChange(void) {
       flagRightLine = true;
       flag_time = millis();
       changeZoneTo(ZONE_3);
+    } else if (left && zone == ZONE_3 && curr_time - zone_time > 5000) {
+      changeZoneTo(ZONE_4);
     }
 }
 
@@ -210,6 +220,8 @@ void changeLineStateTo(States_r s) {
 void changeZoneTo(Zones_t z) {
   if (z != zone) {
     zone = z;
+    zone_time = millis();
+    Serial.println("In new zone " + z);
   }
 }
 

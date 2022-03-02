@@ -4,6 +4,6 @@ void setup(){
     Serial.begin(9600);
 }
 void loop(void){
-    Serial.println("Currently doing some testing...");
+    shephard.chassis.turn_right(200);
     delay(1000);
 }   
