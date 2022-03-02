@@ -9,7 +9,7 @@ class LineSensor
     int read();
     int readAnalog();     //adding for debug purposes
     int getPin();
-    const int lineThreshold = 600; 
+    const int lineThreshold = 400; 
   private:
     int pin;
 };

@@ -9,11 +9,13 @@
 
 /*---------------State Definitions--------------------------*/
 typedef enum {
-  STATE_IDLE, STATE_LOAD, STATE_NAV_TARGET, STATE_UNLOAD, STATE_NAV_LOAD
+  STATE_IDLE, STATE_LOAD, STATE_NAV_TARGET, STATE_UNLOAD, 
+  STATE_NAV_LOAD, STATE_ON_LINE, STATE_OFF_LEFT, STATE_OFF_RIGHT 
 } States_t;
 
 /*----------------------------Function Prototypes------------*/
 void checkGlobalEvents(void);
+void checkLineSensors(void);
 void handleMoveForward(void);
 void handleMoveBackward(void);
 uint8_t TestForKey(void);
