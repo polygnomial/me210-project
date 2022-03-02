@@ -28,7 +28,6 @@ void setup() {
   state_time = millis();
   flag_time = millis();
 
-  // currently not doing anything
   state = STATE_NAV_TARGET; 
   
   Serial.println("Setup Complete!");
@@ -109,8 +108,10 @@ void handleNavTargetState(void){
       }
       break;
     case ZONE_4:
+      // TO IMPLEMENT
       break;
     case ZONE_TARGET:
+      // TO IMPLEMENT
       break;
     default:
       Serial.println("Zone has more states than Paxton thought");
