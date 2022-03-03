@@ -36,10 +36,12 @@
 
 struct System
 {
-public:
-  struct Sensors
-  {
-    struct LineSensors
+  public:
+
+    System(void){
+      UltrasonicSensor::initialize();
+    };
+    struct Sensors
     {
       LineSensor left = LineSensor(LINE_LEFT);
       LineSensor center_middle = LineSensor(LINE_CENTER_MIDDLE);
