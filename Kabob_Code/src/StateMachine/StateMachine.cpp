@@ -1,6 +1,9 @@
 #include "StateMachine.h"
 
-#define VELOCITY 200
+#define VELOCITY 255
+
+#define Right_TURN_TIME       4000
+#define SECOUND_TURN_TIME     2500
 
 States_t state;
 States_r line_state;
@@ -22,14 +25,17 @@ unsigned long flag_time;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
+  shephard.claw.open();
   while(!Serial);
   //delay(10000);
-
+  delay(3000);
   //times
   curr_time = millis();
   serial_time = millis();
   state_time = millis();
   flag_time = millis();
+
+  
 
   changeStateTo(STATE_LOAD);
   
@@ -83,9 +89,9 @@ void handleLoadState(void) {
     shephard.claw.open(); 
   } else if (timeInState > 1000 && timeInState < 2000) {
     shephard.claw.close(); 
-  } else if (timeInState > 2000  && timeInState < 6000) {
+  } else if (timeInState > 2000  && timeInState < 5000) {
     shephard.chassis.move_forward_at_speed(VELOCITY);
-  } else if (timeInState > 6000) { 
+  } else if (timeInState > 5000) { 
     changeStateTo(STATE_NAV_TARGET);
     changeZoneTo(ZONE_1);
   }
@@ -98,8 +104,8 @@ void handleUnloadState(void) {
   } else if (timeInState > 1000 && timeInState < 4000) {
     shephard.chassis.move_backward_at_speed(VELOCITY);
   } else if (timeInState > 4000 && timeInState < 10000) {
-    shephard.chassis.turn_right_at_speed(255);
-  } else if (timeInState > 9000) {
+    shephard.chassis.turn_left_at_speed(VELOCITY);
+  } else if (timeInState > 10000) {
     changeStateTo(STATE_NAV_LOAD);
   } 
 }
@@ -121,15 +127,15 @@ void handleNavTargetState(void){
       break;
     case ZONE_3:
       // turn 90 degrees and then line follow
-      if (t > 1000 && t < 5000) {
+      if (t > 1000 && t < 1000+Right_TURN_TIME) {
         shephard.chassis.turn_right(200);
       } else {
         lineFollow();
       }
       break;
     case ZONE_4:
-      // turn 90 degrees and then line follow
-      if (t < 3000) {
+      // turn less than 90 degrees and then line follow
+      if (t < SECOUND_TURN_TIME) {
         shephard.chassis.turn_left(200);
       } else {
         lineFollow();
@@ -204,7 +210,7 @@ void lineFollow(void) {
 
     switch(line_state) {
       case STATE_ON_LINE:
-        shephard.chassis.move_forward_at_speed(250);
+        shephard.chassis.move_forward_at_speed(VELOCITY);
         break;
       case STATE_OFF_RIGHT:
         shephard.chassis.veer_forward(250, 180);
