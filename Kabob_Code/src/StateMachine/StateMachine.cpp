@@ -86,7 +86,7 @@ void handleLoadState(void) {
     shephard.chassis.move_forward_at_speed(VELOCITY);
   } else if (timeInState > 3000) { 
     changeStateTo(STATE_NAV_TARGET);
-    changeZoneTo(ZONE_1);
+    changeZoneTo(ZONE_A);
   }
 }
 
@@ -114,9 +114,30 @@ void handleNavTargetState(void){
   unsigned long t = curr_time - zone_time;   
   switch(zone) {
     case ZONE_LOAD:
+    break;
+    case ZONE_A:
+      shephard.chassis.move_forward_at_speed(200);
+      break;
+    case ZONE_B:
+      if (t < 3000) {
+        shephard.chassis.turn_left(200);
+      } else {
+        lineFollow();
+      }
+      break;
+    case ZONE_C:
+      if (t < 3000) {
+        shephard.chassis.turn_left(200);
+      } else {
+        lineFollow();
+      }
       break;
     case ZONE_1:
-      lineFollow();
+      if (t < 4000) {
+        shephard.chassis.move_forward_at_speed(200);
+      } else {
+        lineFollow();
+      }
       break;
     case ZONE_2:
       lineFollow();
@@ -167,8 +188,17 @@ void checkFlags(void) {
 void checkForZoneChange(void) {
     uint8_t left = shephard.sensors.line.left.read();
     uint8_t right = shephard.sensors.line.right.read();
-    //Serial.println(left);
-    if (left && zone == ZONE_1) {
+    uint8_t center_left = shephard.sensors.line.center_left.read();
+    uint8_t center_middle = shephard.sensors.line.center_middle.read();
+    uint8_t center_right = shephard.sensors.line.center_right.read();
+    if (left) Serial.println("left sensor tripped");
+    if (left && (zone == ZONE_A)) {
+      changeZoneTo(ZONE_B);
+    } else if (left && (zone == ZONE_B)) {
+      changeZoneTo(ZONE_C);
+    } else if (right && (zone == ZONE_C)) {
+      changeZoneTo(ZONE_1);
+    } else if (left && zone == ZONE_1) {
       setFlag(flagLeftLine);
       changeZoneTo(ZONE_2);
     } else if (right && zone == ZONE_2) {
