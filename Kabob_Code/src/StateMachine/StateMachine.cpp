@@ -191,12 +191,13 @@ void checkForZoneChange(void) {
     uint8_t center_left = shephard.sensors.line.center_left.read();
     uint8_t center_middle = shephard.sensors.line.center_middle.read();
     uint8_t center_right = shephard.sensors.line.center_right.read();
-    if (left) Serial.println("left sensor tripped");
+    // if (left) Serial.println("left sensor tripped");
+    Serial.println(zone);
     if (left && (zone == ZONE_A)) {
       changeZoneTo(ZONE_B);
-    } else if (left && (zone == ZONE_B)) {
+    } else if (left && zone == ZONE_B && curr_time - zone_time > 3000) {
       changeZoneTo(ZONE_C);
-    } else if (right && (zone == ZONE_C)) {
+    } else if (right && zone == ZONE_C && curr_time - zone_time > 5000) {
       changeZoneTo(ZONE_1);
     } else if (left && zone == ZONE_1) {
       setFlag(flagLeftLine);
