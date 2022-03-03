@@ -11,11 +11,10 @@ unsigned long serial_time;
 unsigned long curr_time;
 unsigned long zone_time;
 
-uint8_t servoPin = 6;
-uint8_t servoPos = 0;
-
 uint8_t flagLeftLine = 0;
 uint8_t flagRightLine = 0;
+
+uint8_t DEBUG = false;
 
 unsigned long flag_time;
 
@@ -42,8 +41,6 @@ void loop() {
   checkFlags();
   checkForZoneChange();
 
-  // TO LINE FOLLOW: Must be in state = state_nav_target
-
   switch(state) {
     case STATE_IDLE:
       shephard.chassis.stop();
@@ -65,14 +62,14 @@ void loop() {
   }
 
   //debug for line sensors
-  if (curr_time - serial_time > MILLISECONDS(1/PRINT_FREQUENCY) ){
+  if (DEBUG && curr_time - serial_time > MILLISECONDS(1/PRINT_FREQUENCY) ){
     Serial.println("---------------");
-    //Serial.println("left " + String(shephard.sensors.line.left.read()));
-    //Serial.println("right " + String(shephard.sensors.line.right.read()));
-    //Serial.println("center left " + String(shephard.sensors.line.center_left.read()));
-    //Serial.println("center middle " + String(shephard.sensors.line.center_middle.read()));
-    //Serial.println("center right " + String(shephard.sensors.line.center_right.read()));
-    //Serial.println("---------------");
+    Serial.println("left " + String(shephard.sensors.line.left.read()));
+    Serial.println("right " + String(shephard.sensors.line.right.read()));
+    Serial.println("center left " + String(shephard.sensors.line.center_left.read()));
+    Serial.println("center middle " + String(shephard.sensors.line.center_middle.read()));
+    Serial.println("center right " + String(shephard.sensors.line.center_right.read()));
+    Serial.println("---------------");
     serial_time = curr_time;
   }
 }
@@ -83,9 +80,11 @@ void handleLoadState(void) {
     shephard.claw.open(); 
   } else if (timeInState > 1000 && timeInState < 2000) {
     shephard.claw.close(); 
-  } else if (timeInState > 2000  && timeInState < 6000) {
+  } else if (timeInState > 2000  && timeInState < 3000) {
+    // THIS IS WHERE THE ROBOT GETS HOSED
+    // cannot go straight for more than 1 or 2 secounds
     shephard.chassis.move_forward_at_speed(VELOCITY);
-  } else if (timeInState > 6000) { 
+  } else if (timeInState > 3000) { 
     changeStateTo(STATE_NAV_TARGET);
     changeZoneTo(ZONE_1);
   }
@@ -95,20 +94,23 @@ void handleUnloadState(void) {
   int timeInState = curr_time - state_time;
   if (timeInState < 1000) {
     shephard.claw.open(); 
-  } else if (timeInState > 1000 && timeInState < 4000) {
+  } 
+  
+  // back up after depositing ball
+  else if (timeInState > 1000 && timeInState < 4000) {
     shephard.chassis.move_backward_at_speed(VELOCITY);
-  } else if (timeInState > 4000 && timeInState < 10000) {
+  } 
+  // about 6 secounds to rotate 180 degrees
+  else if (timeInState > 4000 && timeInState < 10000) {
     shephard.chassis.turn_right_at_speed(255);
-  } else if (timeInState > 9000) {
+  } 
+  
+  else if (timeInState > 9000) {
     changeStateTo(STATE_NAV_LOAD);
   } 
 }
 
 void handleNavTargetState(void){
-  //shephard.chassis.move_forward_at_speed(200);
-  //if (millis() - state_time> 5000){
-  //  changeStateTo(STATE_IDLE);
-  //}    
   unsigned long t = curr_time - zone_time;   
   switch(zone) {
     case ZONE_LOAD:
