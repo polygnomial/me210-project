@@ -29,15 +29,19 @@
 
 #define HUB_TO_HUB_DISTANCE 25.1  // cm
 #define WHEEL_CIRCUMFERENCE 31.33 // cm
-#define MOTOR_MIN_SPEED 55        // Measured with both motors running.
-                                  // If only 1 motor is running the min will be higher
+#define MOTOR_MIN_SPEED 55 // Measured with both motors running. 
+                           // If only 1 motor is running the min will be higher
+#define ULTRASONIC_FRONT_TRIG 1
+#define ULTRASONIC_FRONT_ECHO 2
 
 struct System
 {
-public:
-  struct Sensors
-  {
-    struct LineSensors
+  public:
+
+    System(void){
+      UltrasonicSensor::initialize();
+    };
+    struct Sensors
     {
       LineSensor left = LineSensor(LINE_LEFT);
       LineSensor center_middle = LineSensor(LINE_CENTER_MIDDLE);
@@ -47,10 +51,10 @@ public:
     };
     LineSensors line;
 
-    struct UltrasonicSensors
-    {
-      UltrasonicSensor front = UltrasonicSensor(15);
-      UltrasonicSensor periscope = UltrasonicSensor(15);
+      struct UltrasonicSensors{
+        UltrasonicSensor front = UltrasonicSensor(ULTRASONIC_FRONT_TRIG, ULTRASONIC_FRONT_ECHO);
+      };
+      UltrasonicSensors ultra;
     };
     UltrasonicSensors ultra;
   };
