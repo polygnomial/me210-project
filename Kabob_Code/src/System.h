@@ -47,10 +47,11 @@ public:
     };
     LineSensors line;
 
-    struct UltrasonicSensors
-    {
-      UltrasonicSensor front = UltrasonicSensor(15);
-      UltrasonicSensor periscope = UltrasonicSensor(15);
+      struct UltrasonicSensors{
+        UltrasonicSensor front = UltrasonicSensor(1, 2);
+        UltrasonicSensor periscope = UltrasonicSensor(3, 4);
+      };
+      UltrasonicSensors ultra;
     };
     UltrasonicSensors ultra;
   };
