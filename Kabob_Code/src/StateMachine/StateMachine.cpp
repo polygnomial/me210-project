@@ -1,5 +1,7 @@
 #include "StateMachine.h"
 
+#define VELOCITY 200
+
 States_t state;
 States_r line_state;
 Zones_t zone;
@@ -21,15 +23,15 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   while(!Serial);
+  //delay(10000);
 
-  //timer 
+  //times
   curr_time = millis();
   serial_time = millis();
   state_time = millis();
   flag_time = millis();
 
-  state = STATE_NAV_TARGET; 
-  zone = ZONE_1;
+  changeStateTo(STATE_LOAD);
   
   Serial.println("Setup Complete!");
 }
@@ -39,7 +41,6 @@ void loop() {
   checkGlobalEvents();
   checkFlags();
   checkForZoneChange();
-  // shephard.activity();
 
   // TO LINE FOLLOW: Must be in state = state_nav_target
 
@@ -54,9 +55,10 @@ void loop() {
       handleNavTargetState();
       break;
     case STATE_UNLOAD:
-      shephard.chassis.move_backward_at_speed(100);
+      handleUnloadState();
       break;
     case STATE_NAV_LOAD:
+      handleNavLoadState();
       break;
     default:
       Serial.println("What is this I do not even...");
@@ -76,14 +78,30 @@ void loop() {
 }
 
 void handleLoadState(void) {
-  int timeInState = millis() - state_time;
-  if (timeInState < 1500) {
+  unsigned int timeInState = curr_time - state_time;
+  if (timeInState < 1000) {
     shephard.claw.open(); 
-  } else if (timeInState > 3000 && timeInState < 5000) {
+  } else if (timeInState > 1000 && timeInState < 2000) {
     shephard.claw.close(); 
-  } else if (timeInState > 5000) {
+  } else if (timeInState > 2000  && timeInState < 6000) {
+    shephard.chassis.move_forward_at_speed(VELOCITY);
+  } else if (timeInState > 6000) { 
     changeStateTo(STATE_NAV_TARGET);
+    changeZoneTo(ZONE_1);
   }
+}
+
+void handleUnloadState(void) {
+  int timeInState = curr_time - state_time;
+  if (timeInState < 1000) {
+    shephard.claw.open(); 
+  } else if (timeInState > 1000 && timeInState < 4000) {
+    shephard.chassis.move_backward_at_speed(VELOCITY);
+  } else if (timeInState > 4000 && timeInState < 10000) {
+    shephard.chassis.turn_right_at_speed(255);
+  } else if (timeInState > 9000) {
+    changeStateTo(STATE_NAV_LOAD);
+  } 
 }
 
 void handleNavTargetState(void){
@@ -118,11 +136,19 @@ void handleNavTargetState(void){
       }
       break;
     case ZONE_TARGET:
-      // TO IMPLEMENT
+      if (t < 1000) {
+        shephard.chassis.move_forward_at_speed(VELOCITY);
+      } else {
+        changeStateTo(STATE_UNLOAD);
+      }
       break;
     default:
       Serial.println("Zone has more states than Paxton thought");
   }
+}
+
+void handleNavLoadState(void) {
+  shephard.chassis.stop();
 }
 
 void checkGlobalEvents(void) {
@@ -141,15 +167,16 @@ void checkForZoneChange(void) {
     uint8_t right = shephard.sensors.line.right.read();
     //Serial.println(left);
     if (left && zone == ZONE_1) {
-      flagLeftLine = true;
-      flag_time = millis();
+      setFlag(flagLeftLine);
       changeZoneTo(ZONE_2);
     } else if (right && zone == ZONE_2) {
-      flagRightLine = true;
-      flag_time = millis();
+      setFlag(flagRightLine);
       changeZoneTo(ZONE_3);
     } else if (left && zone == ZONE_3 && curr_time - zone_time > 5000) {
       changeZoneTo(ZONE_4);
+      setFlag(flagLeftLine);
+    } else if (left && zone == ZONE_4 && curr_time - zone_time > 6000) {
+      changeZoneTo(ZONE_TARGET);
     }
 }
 
@@ -168,28 +195,28 @@ void lineFollow(void) {
     else if (!center_middle && !center_right && center_left) { 
       changeLineStateTo(STATE_OFF_RIGHT);
     }
-    else if (center_middle && !center_right && center_left) { 
+    else if (center_middle && !center_right && center_left && !flagLeftLine) { 
       changeLineStateTo(STATE_OFF_SLIGHT_RIGHT);
     }
-    else if (center_middle && center_right && !center_left) { 
+    else if (center_middle && center_right && !center_left && !flagRightLine) { 
       changeLineStateTo(STATE_OFF_SLIGHT_LEFT);
     }
 
     switch(line_state) {
       case STATE_ON_LINE:
-        shephard.chassis.move_forward_at_speed(200);
+        shephard.chassis.move_forward_at_speed(250);
         break;
       case STATE_OFF_RIGHT:
         shephard.chassis.veer_forward(250, 180);
         break;
       case STATE_OFF_SLIGHT_RIGHT:
-        shephard.chassis.veer_forward(250, 180);
+        shephard.chassis.veer_forward(250, 200);
         break;
       case STATE_OFF_LEFT:
         shephard.chassis.veer_forward(180, 250);
         break;
       case STATE_OFF_SLIGHT_LEFT:
-        shephard.chassis.veer_forward(180, 250);
+        shephard.chassis.veer_forward(200, 250);
         break;
       default:
         Serial.println("humm");
@@ -223,6 +250,11 @@ void changeZoneTo(Zones_t z) {
     zone_time = millis();
     Serial.println("In new zone " + z);
   }
+}
+
+void setFlag(uint8_t flag){
+  flag = true;
+  flag_time = curr_time;
 }
 
 void RespToKey(void) {
