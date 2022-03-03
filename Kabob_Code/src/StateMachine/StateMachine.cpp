@@ -159,6 +159,7 @@ void handleNavLoadState(void) {
 
 void checkGlobalEvents(void) {
   if (TestForKey()) RespToKey();
+  // if (TestForRobot()) RespToRobot();
 }
 
 void checkFlags(void) {
@@ -230,6 +231,10 @@ void lineFollow(void) {
 
 }
   
+uint8_t TestForRobot(void) {
+
+}
+
 uint8_t TestForKey(void) {
   uint8_t KeyEventOccurred;
   KeyEventOccurred = Serial.available();

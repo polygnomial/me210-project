@@ -32,6 +32,8 @@ void handleMoveForward(void);
 void handleMoveBackward(void);
 uint8_t TestForKey(void);
 void RespToKey(void);
+uint8_t TestForRobot(void);
+void RespToRobot(void);
 void handleRightTurn(void);
 void handleLeftTurn(void);
 void handleLoadState(void);
