@@ -127,17 +127,29 @@ void handleNavTargetState(void){
       break;
     case ZONE_3:
       // turn 90 degrees and then line follow
+<<<<<<< Updated upstream
       if (t > 300 && t < 300+Right_TURN_TIME) {
         shephard.chassis.turn_right(100);
       } else {
+=======
+      if (t > 200 && t < 250+1000) { //!!! Change this value if you change the speed
+        makeFirstTurn();
+      } else if (t < 4000) {
+>>>>>>> Stashed changes
         lineFollow();
       }
       break;
     case ZONE_4:
       // turn less than 90 degrees and then line follow
+<<<<<<< Updated upstream
       if (t < SECOUND_TURN_TIME) {
         shephard.chassis.turn_left(100);
       } else {
+=======
+      if (t < 100) {
+        shephard.chassis.turn_ccw(100);
+      } else if (t > 900) { // Have to get this time to exactly match the angle
+>>>>>>> Stashed changes
         lineFollow();
       }
       break;
@@ -178,7 +190,7 @@ void checkForZoneChange(void) {
     } else if (right && zone == ZONE_2) {
       setFlag(flagRightLine);
       changeZoneTo(ZONE_3);
-    } else if (left && zone == ZONE_3 && curr_time - zone_time > 2000) {
+    } else if ((left || right) && zone == ZONE_3 && curr_time - zone_time > 3000) {
       changeZoneTo(ZONE_4);
       setFlag(flagLeftLine);
     } else if (left && zone == ZONE_4 && curr_time - zone_time > 2000) {
@@ -210,7 +222,7 @@ void lineFollow(void) {
 
     switch(line_state) {
       case STATE_ON_LINE:
-        shephard.chassis.move_forward_at_speed(130);
+        shephard.chassis.move_forward_at_speed(150);
         break;
       case STATE_OFF_RIGHT:
         shephard.chassis.veer_forward(140, 100);
