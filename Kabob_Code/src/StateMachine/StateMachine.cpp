@@ -1,9 +1,9 @@
 #include "StateMachine.h"
 
-#define VELOCITY 255
+#define VELOCITY 100
 
-#define Right_TURN_TIME       4000
-#define SECOUND_TURN_TIME     2500
+#define Right_TURN_TIME       2100
+#define SECOUND_TURN_TIME     550
 
 States_t state;
 States_r line_state;
@@ -89,9 +89,9 @@ void handleLoadState(void) {
     shephard.claw.open(); 
   } else if (timeInState > 1000 && timeInState < 2000) {
     shephard.claw.close(); 
-  } else if (timeInState > 2000  && timeInState < 5000) {
-    shephard.chassis.move_forward_at_speed(VELOCITY);
-  } else if (timeInState > 5000) { 
+  } else if (timeInState > 2000  && timeInState < 2500) {
+    shephard.chassis.move_forward_at_speed(150);
+  } else if (timeInState > 3500) { 
     changeStateTo(STATE_NAV_TARGET);
     changeZoneTo(ZONE_1);
   }
@@ -127,8 +127,8 @@ void handleNavTargetState(void){
       break;
     case ZONE_3:
       // turn 90 degrees and then line follow
-      if (t > 1000 && t < 1000+Right_TURN_TIME) {
-        shephard.chassis.turn_right(200);
+      if (t > 300 && t < 300+Right_TURN_TIME) {
+        shephard.chassis.turn_right(100);
       } else {
         lineFollow();
       }
@@ -136,13 +136,13 @@ void handleNavTargetState(void){
     case ZONE_4:
       // turn less than 90 degrees and then line follow
       if (t < SECOUND_TURN_TIME) {
-        shephard.chassis.turn_left(200);
+        shephard.chassis.turn_left(100);
       } else {
         lineFollow();
       }
       break;
     case ZONE_TARGET:
-      if (t < 1000) {
+      if (t < 400) {
         shephard.chassis.move_forward_at_speed(VELOCITY);
       } else {
         changeStateTo(STATE_UNLOAD);
@@ -178,10 +178,10 @@ void checkForZoneChange(void) {
     } else if (right && zone == ZONE_2) {
       setFlag(flagRightLine);
       changeZoneTo(ZONE_3);
-    } else if (left && zone == ZONE_3 && curr_time - zone_time > 5000) {
+    } else if (left && zone == ZONE_3 && curr_time - zone_time > 2000) {
       changeZoneTo(ZONE_4);
       setFlag(flagLeftLine);
-    } else if (left && zone == ZONE_4 && curr_time - zone_time > 6000) {
+    } else if (left && zone == ZONE_4 && curr_time - zone_time > 2000) {
       changeZoneTo(ZONE_TARGET);
     }
 }
@@ -210,19 +210,19 @@ void lineFollow(void) {
 
     switch(line_state) {
       case STATE_ON_LINE:
-        shephard.chassis.move_forward_at_speed(VELOCITY);
+        shephard.chassis.move_forward_at_speed(130);
         break;
       case STATE_OFF_RIGHT:
-        shephard.chassis.veer_forward(250, 180);
+        shephard.chassis.veer_forward(140, 100);
         break;
       case STATE_OFF_SLIGHT_RIGHT:
-        shephard.chassis.veer_forward(250, 200);
+        shephard.chassis.veer_forward(130, 100);
         break;
       case STATE_OFF_LEFT:
-        shephard.chassis.veer_forward(180, 250);
+        shephard.chassis.veer_forward(100, 140);
         break;
       case STATE_OFF_SLIGHT_LEFT:
-        shephard.chassis.veer_forward(200, 250);
+        shephard.chassis.veer_forward(100, 130);
         break;
       default:
         Serial.println("humm");
