@@ -2,7 +2,7 @@
 
 #define VELOCITY 255
 
-#define Right_TURN_TIME       4000
+#define Left_TURN_TIME       4000
 #define SECOUND_TURN_TIME     2500
 
 States_t state;
@@ -104,7 +104,8 @@ void handleUnloadState(void) {
   } else if (timeInState > 1000 && timeInState < 4000) {
     shephard.chassis.move_backward_at_speed(VELOCITY);
   } else if (timeInState > 4000 && timeInState < 10000) {
-    shephard.chassis.turn_left_at_speed(VELOCITY);
+    // changed
+    shephard.chassis.turn_right_at_speed(VELOCITY);
   } else if (timeInState > 10000) {
     changeStateTo(STATE_NAV_LOAD);
   } 
@@ -126,17 +127,17 @@ void handleNavTargetState(void){
       lineFollow();
       break;
     case ZONE_3:
-      // turn 90 degrees and then line follow
-      if (t > 1000 && t < 1000+Right_TURN_TIME) {
-        shephard.chassis.turn_right(200);
+      // turn 90 degrees and then line follow. Changed
+      if (t > 1000 && t < 1000+Left_TURN_TIME) {
+        shephard.chassis.turn_left(200);
       } else {
         lineFollow();
       }
       break;
     case ZONE_4:
-      // turn less than 90 degrees and then line follow
+      // turn less than 90 degrees and then line follow CHANGED
       if (t < SECOUND_TURN_TIME) {
-        shephard.chassis.turn_left(200);
+        shephard.chassis.turn_right(200);
       } else {
         lineFollow();
       }
@@ -172,16 +173,16 @@ void checkForZoneChange(void) {
     uint8_t left = shephard.sensors.line.left.read();
     uint8_t right = shephard.sensors.line.right.read();
     //Serial.println(left);
-    if (left && zone == ZONE_1) {
-      setFlag(flagLeftLine);
-      changeZoneTo(ZONE_2);
-    } else if (right && zone == ZONE_2) {
+    if (right && zone == ZONE_1) {
       setFlag(flagRightLine);
-      changeZoneTo(ZONE_3);
-    } else if (left && zone == ZONE_3 && curr_time - zone_time > 5000) {
-      changeZoneTo(ZONE_4);
+      changeZoneTo(ZONE_2);
+    } else if (left && zone == ZONE_2) {
       setFlag(flagLeftLine);
-    } else if (left && zone == ZONE_4 && curr_time - zone_time > 6000) {
+      changeZoneTo(ZONE_3);
+    } else if (right && zone == ZONE_3 && curr_time - zone_time > 5000) {
+      changeZoneTo(ZONE_4);
+      setFlag(flagRightLine);
+    } else if (right && zone == ZONE_4 && curr_time - zone_time > 6000) {
       changeZoneTo(ZONE_TARGET);
     }
 }
