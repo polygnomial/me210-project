@@ -3,11 +3,6 @@
 
 void MotorWithEncoder::activity(){
   pos = abs(encoder.read());
-
-  Serial.println("position = ");
-  Serial.println(pos);
-  Serial.println("target : ");
-  Serial.println(target);
   
   // overflow protection
   if (pos > 0xFFFFFF){
@@ -29,9 +24,13 @@ void MotorWithEncoder::stop(void) {
   overflow = 0;
   pos = 0;
   target = 0;
+  occupied = false;
 }
 
 void MotorWithEncoder::move(double angle, uint8_t speed){
+  if (occupied) return;
+  occupied = true;
+
   if (angle > 0){
     cw_at_speed(speed);
   } else {

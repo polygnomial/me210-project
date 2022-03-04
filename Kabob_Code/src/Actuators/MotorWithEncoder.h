@@ -42,4 +42,5 @@ private:
   double target;
   double overflow;
   uint8_t min_speed;
+  uint8_t occupied;
 };
