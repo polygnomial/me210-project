@@ -3,6 +3,11 @@
 
 void MotorWithEncoder::activity(){
   pos = abs(encoder.read());
+
+  Serial.println("position = ");
+  Serial.println(pos);
+  Serial.println("target : ");
+  Serial.println(target);
   
   // overflow protection
   if (pos > 0xFFFFFF){

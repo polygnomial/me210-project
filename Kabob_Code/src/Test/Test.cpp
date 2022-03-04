@@ -2,11 +2,12 @@
 
 void setup(){
     Serial.begin(9600);
+    while(!Serial);
     Serial.println("Starting");
+    shephard.chassis.turn_ccw(90, 150);
 }
 
 void loop(void){
-  Serial.println("ah");
-  shephard.chassis.move_forward_at_speed(200);
-  delay(1000);
+  shephard.activity();
+  delay(100);
 }   

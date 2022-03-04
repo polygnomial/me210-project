@@ -20,6 +20,10 @@ uint8_t servoPos = 0;
 uint8_t flagLeftLine = 0;
 uint8_t flagRightLine = 0;
 
+//if this is true, do not allow motor to be set on different course
+// unless extreme reason (i.e. hole)
+uint8_t navigationSet = 0;
+
 unsigned long flag_time;
 
 void setup() {
@@ -47,6 +51,7 @@ void loop() {
   checkGlobalEvents();
   checkFlags();
   checkForZoneChange();
+  shephard.chassis.activity();
 
   // TO LINE FOLLOW: Must be in state = state_nav_target
 
@@ -91,7 +96,7 @@ void handleLoadState(void) {
     shephard.claw.close(); 
   } else if (timeInState > 2000  && timeInState < 2500) {
     shephard.chassis.move_forward_at_speed(150);
-  } else if (timeInState > 3500) { 
+  } else if (timeInState > 2500) { 
     changeStateTo(STATE_NAV_TARGET);
     changeZoneTo(ZONE_1);
   }
