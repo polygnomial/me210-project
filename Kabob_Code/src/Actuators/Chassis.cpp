@@ -47,14 +47,14 @@ void Chassis::veer_backward(uint8_t speed_right, uint8_t speed_left)
 
 void Chassis::turn_cw(double angle, uint8_t speed)
 {
-  double movement_degrees = chassis_circumference * (angle / 360) / wheel_circumference * 360;
+  double movement_degrees = angle * chassis_circumference / wheel_circumference;
   right.ccw(movement_degrees, speed);
   left.ccw(movement_degrees, speed);
 }
 
 void Chassis::turn_ccw(double angle, uint8_t speed)
 {
-  double movement_degrees = chassis_circumference * (angle / 360) / wheel_circumference * 360;
+  double movement_degrees = angle * chassis_circumference / wheel_circumference;
   right.cw(movement_degrees, speed);
   left.cw(movement_degrees, speed);
 }
