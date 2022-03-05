@@ -1,7 +1,7 @@
 #include "Arduino.h"
 #include "MotorWithEncoder.h"
 
-void MotorWithEncoder::activity(){
+void MotorWithEncoder::activity(){ //TODO schedule with interrupt at some frequency
   pos = abs(encoder.read());
   
   // overflow protection

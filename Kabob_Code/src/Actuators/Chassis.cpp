@@ -10,15 +10,15 @@ void Chassis::stop(void)
 void Chassis::move_forward(double distance, uint8_t speed)
 {
   double movement_degrees = distance / wheel_circumference * 360;
-  right.move(movement_degrees, speed);
-  left.move(-movement_degrees, speed);
+  right.cw(movement_degrees, speed);
+  left.ccw(-movement_degrees, speed);
 }
 
 void Chassis::move_backward(double distance, uint8_t speed)
 {
   double movement_degrees = distance / wheel_circumference * 360;
-  right.move(-movement_degrees, speed);
-  left.move(movement_degrees, speed);
+  right.cw(-movement_degrees, speed);
+  left.ccw(movement_degrees, speed);
 }
 
 void Chassis::turn_right(uint8_t speed)
