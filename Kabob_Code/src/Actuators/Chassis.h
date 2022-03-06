@@ -3,6 +3,7 @@
 #include "Arduino.h"
 #include "Motor.h"
 #include "MotorWithEncoder.h"
+#include "StepperMotor.h"
 
 class Chassis
 {
@@ -17,8 +18,11 @@ public:
           unsigned le_pin2,
           double hub_to_hub_distance,
           double wheel_circumference,
-          uint8_t min_speed) : right(rf_pin, rb_pin, re_pin1, re_pin2, min_speed),
+          uint8_t min_speed,
+          unsigned dir_pin,
+          unsigned step_pin) : right(rf_pin, rb_pin, re_pin1, re_pin2, min_speed),
                                left(lf_pin, lb_pin, le_pin1, le_pin2, min_speed),
+                               stepper(dir_pin, step_pin),
                                chassis_circumference(hub_to_hub_distance * PI),
                                wheel_circumference(wheel_circumference),
                                ninety_degrees(chassis_circumference / 4 / wheel_circumference * 360){};
@@ -56,6 +60,8 @@ public:
 
   MotorWithEncoder right;
   MotorWithEncoder left;
+
+  StepperMotor stepper;
 
 private:
   double chassis_circumference,

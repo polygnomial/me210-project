@@ -27,10 +27,14 @@
 #define LINE_CENTER_RIGHT 16
 #define LINE_CENTER_LEFT 17
 
+#define STEPPER_DIR 16
+#define STEPPER_STEP 15
+
 #define HUB_TO_HUB_DISTANCE 25.1  // cm
 #define WHEEL_CIRCUMFERENCE 31.33 // cm
 #define MOTOR_MIN_SPEED 55        // Measured with both motors running.
                                   // If only 1 motor is running the min will be higher
+
 
 struct System
 {
@@ -65,7 +69,9 @@ public:
                             ENCODER_LEFT_PIN2,
                             HUB_TO_HUB_DISTANCE,
                             WHEEL_CIRCUMFERENCE,
-                            MOTOR_MIN_SPEED);
+                            MOTOR_MIN_SPEED,
+                            STEPPER_DIR,
+                            STEPPER_STEP);
   Claw claw = Claw(SERVO_PIN, OPEN_CLAW_ANGLE, CLOSE_CLAW_ANGLE);
 
   void activity(void);
