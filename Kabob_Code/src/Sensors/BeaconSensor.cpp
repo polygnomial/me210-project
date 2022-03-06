@@ -12,8 +12,8 @@ void CountFallingEdges() {
 
 // keep falling edge count updated
 void UpdateFrequency() { 
-  frequency = count / 0.01;
-  timerFlag = 1;
+  Serial.println(count);
+  count=0;
 }
 
 BeaconSensor::BeaconSensor(int pin)
@@ -24,12 +24,10 @@ BeaconSensor::BeaconSensor(int pin)
 
 uint32_t BeaconSensor::read()
 {
-  timerFlag = 0;
-  count = 0;
-  frequencyTimer.begin(UpdateFrequency, 10000);
+  frequencyTimer.begin(UpdateFrequency, 1000000);
   attachInterrupt(digitalPinToInterrupt(pin), CountFallingEdges, FALLING);
-  while(!timerFlag);
-  Serial.println(count);
+  // while(!timerFlag);
+  // Serial.println(count);
   return(count);
 }
 

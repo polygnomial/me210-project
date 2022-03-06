@@ -51,7 +51,7 @@ void setup() {
 }
 
 void loop() {
-  // curr_time = millis();
+  curr_time = millis();
   // checkGlobalEvents();
   // checkFlags();
   // checkForZoneChange();
@@ -76,7 +76,7 @@ void loop() {
   //   default:
   //     Serial.println("What is this I do not even...");
   // }
-  Serial.println("Beacon " + String(shephard.sensors.beacon.front.read()));
+  
   // //debug for line sensors
   if (curr_time - serial_time > MILLISECONDS(1/PRINT_FREQUENCY) && DEBUG){
     Serial.println("---------------");

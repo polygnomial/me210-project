@@ -28,7 +28,8 @@
 #define LINE_CENTER_RIGHT 16
 #define LINE_CENTER_LEFT 17
 
-#define BEACON_FRONT 19
+#define BEACON_FRONT 5
+
 
 #define HUB_TO_HUB_DISTANCE 25.1  // cm
 #define WHEEL_CIRCUMFERENCE 31.33 // cm
