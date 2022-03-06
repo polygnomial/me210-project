@@ -35,7 +35,7 @@ unsigned long flag_time;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  shephard.claw.open();
+  // shephard.claw.open();
   while(!Serial);
   delay(5000);
 
@@ -45,46 +45,47 @@ void setup() {
   state_time = millis();
   flag_time = millis();
 
-  changeStateTo(STATE_LOAD);
+  // changeStateTo(STATE_LOAD);
   
   Serial.println("Setup Complete!");
 }
 
 void loop() {
-  curr_time = millis();
-  checkGlobalEvents();
-  checkFlags();
-  checkForZoneChange();
-  shephard.activity();
+  // curr_time = millis();
+  // checkGlobalEvents();
+  // checkFlags();
+  // checkForZoneChange();
+  // shephard.activity();
 
-  switch(state) {
-    case STATE_IDLE:
-      shephard.chassis.stop();
-      break;
-    case STATE_LOAD:
-      handleLoadState();
-      break;
-    case STATE_NAV_TARGET:
-      handleNavTargetState();
-      break;
-    case STATE_UNLOAD:
-      handleUnloadState();
-      break;
-    case STATE_NAV_LOAD:
-      handleNavLoadState();
-      break;
-    default:
-      Serial.println("What is this I do not even...");
-  }
-
-  //debug for line sensors
+  // switch(state) {
+  //   case STATE_IDLE:
+  //     shephard.chassis.stop();
+  //     break;
+  //   case STATE_LOAD:
+  //     handleLoadState();
+  //     break;
+  //   case STATE_NAV_TARGET:
+  //     handleNavTargetState();
+  //     break;
+  //   case STATE_UNLOAD:
+  //     handleUnloadState();
+  //     break;
+  //   case STATE_NAV_LOAD:
+  //     handleNavLoadState();
+  //     break;
+  //   default:
+  //     Serial.println("What is this I do not even...");
+  // }
+  Serial.println("Beacon " + String(shephard.sensors.beacon.front.read()));
+  // //debug for line sensors
   if (curr_time - serial_time > MILLISECONDS(1/PRINT_FREQUENCY) && DEBUG){
     Serial.println("---------------");
-    Serial.println("left " + String(shephard.sensors.line.left.read()));
-    Serial.println("right " + String(shephard.sensors.line.right.read()));
-    Serial.println("center left " + String(shephard.sensors.line.center_left.read()));
-    Serial.println("center middle " + String(shephard.sensors.line.center_middle.read()));
-    Serial.println("center right " + String(shephard.sensors.line.center_right.read()));
+    // Serial.println("left " + String(shephard.sensors.line.left.read()));
+    // Serial.println("right " + String(shephard.sensors.line.right.read()));
+    // Serial.println("center left " + String(shephard.sensors.line.center_left.read()));
+    // Serial.println("center middle " + String(shephard.sensors.line.center_middle.read()));
+    // Serial.println("center right " + String(shephard.sensors.line.center_right.read()));
+    Serial.println("Beacon " + String(shephard.sensors.beacon.front.read()));
     Serial.println("---------------");
     serial_time = curr_time;
   }

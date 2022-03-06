@@ -3,6 +3,7 @@
 #include "Arduino.h"
 #include "Sensors/LineSensor.h"
 #include "Sensors/UltrasonicSensor.h"
+#include "Sensors/BeaconSensor.h"
 #include "Actuators/Chassis.h"
 #include "Actuators/Claw.h"
 
@@ -26,6 +27,8 @@
 #define LINE_CENTER_MIDDLE 15
 #define LINE_CENTER_RIGHT 16
 #define LINE_CENTER_LEFT 17
+
+#define BEACON_FRONT 19
 
 #define HUB_TO_HUB_DISTANCE 25.1  // cm
 #define WHEEL_CIRCUMFERENCE 31.33 // cm
@@ -53,6 +56,12 @@ public:
       UltrasonicSensor periscope = UltrasonicSensor(15);
     };
     UltrasonicSensors ultra;
+
+    struct BeaconSensors
+    {
+      BeaconSensor front = BeaconSensor(BEACON_FRONT);
+    };
+    BeaconSensors beacon;
   };
   Sensors sensors;
   Chassis chassis = Chassis(RIGHT_FORWARD_PIN,
