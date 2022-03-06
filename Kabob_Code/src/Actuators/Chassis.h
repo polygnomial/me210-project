@@ -3,7 +3,9 @@
 #include "Arduino.h"
 #include "Motor.h"
 #include "MotorWithEncoder.h"
-#include "StepperMotor.h"
+#include "Stepper.h"
+
+#define stepsPerRotation 800
 
 class Chassis
 {
@@ -22,9 +24,9 @@ public:
           unsigned dir_pin,
           unsigned step_pin) : right(rf_pin, rb_pin, re_pin1, re_pin2, min_speed),
                                left(lf_pin, lb_pin, le_pin1, le_pin2, min_speed),
-                               stepper(dir_pin, step_pin),
                                chassis_circumference(hub_to_hub_distance * PI),
                                wheel_circumference(wheel_circumference),
+                               stepper(Stepper(200, dir_pin, step_pin)), 
                                ninety_degrees(chassis_circumference / 4 / wheel_circumference * 360){};
 
   void activity(void);
@@ -58,10 +60,13 @@ public:
   void turn_right_at_speed(uint8_t speed);
   void turn_left_at_speed(uint8_t speed);
 
+  void stepper_cw(double rotations, uint8_t speed = 50);
+  void stepper_ccw(double rotations, uint8_t speed = 50);
+
   MotorWithEncoder right;
   MotorWithEncoder left;
 
-  StepperMotor stepper;
+  Stepper stepper;
 
 private:
   double chassis_circumference,

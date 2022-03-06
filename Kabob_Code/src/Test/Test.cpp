@@ -19,10 +19,9 @@ void loop() {
 
   // move a number of steps equal to the change in the
   // sensor reading
-  shephard.chassis.stepper.cw(100);
-
+  shephard.chassis.stepper_ccw(1);
   //stepper2.step(100);
-  delay(1000);
+  delay(3000);
 
   Serial.println("test");
 

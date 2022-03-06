@@ -82,3 +82,14 @@ void Chassis::turn_left_at_speed(uint8_t speed)
   right.cw_at_speed(speed);
   left.cw_at_speed(speed);
 }
+
+
+void Chassis::stepper_cw(double rotations, uint8_t speed) {
+  stepper.setSpeed(speed);
+  stepper.step((int(stepsPerRotation * rotations)));
+}
+
+void Chassis::stepper_ccw(double rotations, uint8_t speed) {
+  stepper.setSpeed(speed);
+  stepper.step(-(int(stepsPerRotation * rotations)));
+}
