@@ -48,5 +48,8 @@ void changeZoneTo(Zones_t z);
 void setFlag(uint8_t flag);
 void makeSecondTurn(void);
 void makeFirstTurn(void);
+void readFreq(void);
+void CountFallingEdges(void);
+void announceF(void);
 
 /*---------------Module Variables---------------------------*/

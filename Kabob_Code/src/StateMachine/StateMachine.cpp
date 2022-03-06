@@ -1,4 +1,6 @@
 #include "StateMachine.h"
+#include <Arduino.h>
+#include <Metro.h>
 
 #define VELOCITY 100
 
@@ -21,6 +23,13 @@ uint8_t servoPos = 0;
 
 uint8_t flagLeftLine = 0;
 uint8_t flagRightLine = 0;
+
+int frequency = 0;
+IntervalTimer myTimer;
+IntervalTimer freqTimer;
+int test = 400;
+int count = 0;
+int timertime = 1000000;
 
 
 // right now code only works for state red
@@ -45,9 +54,12 @@ void setup() {
   state_time = millis();
   flag_time = millis();
 
-  // changeStateTo(STATE_LOAD);
+  changeStateTo(STATE_NAV_TARGET);
   
   Serial.println("Setup Complete!");
+
+  freqTimer.begin(announceF,1000000);
+  attachInterrupt(digitalPinToInterrupt(5), CountFallingEdges, FALLING);
 }
 
 void loop() {
@@ -57,38 +69,38 @@ void loop() {
   // checkForZoneChange();
   // shephard.activity();
 
-  // switch(state) {
-  //   case STATE_IDLE:
-  //     shephard.chassis.stop();
-  //     break;
-  //   case STATE_LOAD:
-  //     handleLoadState();
-  //     break;
-  //   case STATE_NAV_TARGET:
-  //     handleNavTargetState();
-  //     break;
-  //   case STATE_UNLOAD:
-  //     handleUnloadState();
-  //     break;
-  //   case STATE_NAV_LOAD:
-  //     handleNavLoadState();
-  //     break;
-  //   default:
-  //     Serial.println("What is this I do not even...");
-  // }
+  switch(state) {
+    case STATE_IDLE:
+      shephard.chassis.stop();
+      break;
+    case STATE_LOAD:
+      handleLoadState();
+      break;
+    case STATE_NAV_TARGET:
+      handleNavTargetState();
+      break;
+    case STATE_UNLOAD:
+      handleUnloadState();
+      break;
+    case STATE_NAV_LOAD:
+      handleNavLoadState();
+      break;
+    default:
+      Serial.println("What is this I do not even...");
+  }
   
   // //debug for line sensors
-  if (curr_time - serial_time > MILLISECONDS(1/PRINT_FREQUENCY) && DEBUG){
-    Serial.println("---------------");
-    // Serial.println("left " + String(shephard.sensors.line.left.read()));
-    // Serial.println("right " + String(shephard.sensors.line.right.read()));
-    // Serial.println("center left " + String(shephard.sensors.line.center_left.read()));
-    // Serial.println("center middle " + String(shephard.sensors.line.center_middle.read()));
-    // Serial.println("center right " + String(shephard.sensors.line.center_right.read()));
-    Serial.println("Beacon " + String(shephard.sensors.beacon.front.read()));
-    Serial.println("---------------");
-    serial_time = curr_time;
-  }
+  // if (curr_time - serial_time > MILLISECONDS(1/PRINT_FREQUENCY) && DEBUG){
+  //   Serial.println("---------------");
+  //   // Serial.println("left " + String(shephard.sensors.line.left.read()));
+  //   // Serial.println("right " + String(shephard.sensors.line.right.read()));
+  //   // Serial.println("center left " + String(shephard.sensors.line.center_left.read()));
+  //   // Serial.println("center middle " + String(shephard.sensors.line.center_middle.read()));
+  //   // Serial.println("center right " + String(shephard.sensors.line.center_right.read()));
+  //   Serial.println("Beacon " + String(shephard.sensors.beacon.front.read()));
+  //   Serial.println("---------------");
+  //   serial_time = curr_time;
+  // }
 }
 
 void handleLoadState(void) {
@@ -101,14 +113,14 @@ void handleLoadState(void) {
     shephard.chassis.move_forward(20, 150);
   } else if (timeInState > 3500) { 
     changeStateTo(STATE_NAV_TARGET);
-    changeZoneTo(ZONE_1);
+    // changeZoneTo(ZONE_1);
   }
 }
 
 void handleUnloadState(void) {
   int timeInState = curr_time - state_time;
   if (timeInState < 1000) {
-    shephard.claw.open(); 
+    // shephard.claw.open(); 
   } else if (timeInState > 1000 && timeInState < 4000) {
     shephard.chassis.move_backward(15, VELOCITY);
   } else if (timeInState > 4000 && timeInState < 10000) {
@@ -118,47 +130,25 @@ void handleUnloadState(void) {
   } 
 }
 
-void handleNavTargetState(void){
-  //shephard.chassis.move_forward_at_speed(200);
-  //if (millis() - state_time> 5000){
-  //  changeStateTo(STATE_IDLE);
-  //}    
-  unsigned long t = curr_time - zone_time;   
-  switch(zone) {
-    case ZONE_LOAD:
-      break;
-    case ZONE_1:
-      lineFollow();
-      break;
-    case ZONE_2:
-      lineFollow();
-      break;
-    case ZONE_3:
-      // turn 90 degrees and then line follow
-      if (t > 300 && t < 300+300) {
-        makeFirstTurn();
-      } else if (t < 4000) {
-        lineFollow();
-      }
-      break;
-    case ZONE_4:
-      // turn less than 90 degrees and then line follow
-      if (t < 100) {
-        shephard.chassis.turn_ccw(100);
-      } else if (t > 4000) {
-        lineFollow();
-      }
-      break;
-    case ZONE_TARGET:
-      if (t < 400) {
-        shephard.chassis.move_forward_at_speed(VELOCITY);
-      } else {
-        changeStateTo(STATE_UNLOAD);
-      }
-      break;
-    default:
-      Serial.println("Zone has more states than Paxton thought");
+void handleNavTargetState(void){  
+  unsigned long t = curr_time - zone_time; 
+  if (frequency == 0) {
+    shephard.chassis.turn_ccw(5, 100);
+  } else if (frequency > 3000) { // AND ULTRASONIC SENSOR SAYS AWAY FROM WALL. Assume for the red team
+    shephard.chassis.move_forward_at_speed(100);
+  } else {
+    shephard.chassis.stop();
+    Serial.println (frequency);
   }
+}
+
+void CountFallingEdges(void) {
+  count ++;
+}                     
+
+void announceF(void) {
+  frequency=count;
+  count=0;
 }
 
 void handleNavLoadState(void) {

@@ -1,34 +1,30 @@
 #include "BeaconSensor.h"
 
-volatile uint32_t count = 0;
-volatile uint32_t timerFlag = 0;
-volatile uint32_t frequency = 0;
-IntervalTimer frequencyTimer;
+
+// void BeaconSensor::initialize(void){
+//   frequencyTimer.begin(UpdateFrequency, 1000000);
+//   attachInterrupt(digitalPinToInterrupt(pin), CountFallingEdges, FALLING);
+// }
 
 // keep falling edge count updated
-void CountFallingEdges() { 
+void BeaconSensor::CountFallingEdges() { 
   count++;
 }
 
 // keep falling edge count updated
-void UpdateFrequency() { 
-  Serial.println(count);
+void BeaconSensor::UpdateFrequency() { 
+  // Serial.println(count);
+  frequency=count;
   count=0;
-}
-
-BeaconSensor::BeaconSensor(int pin)
-{  
-  BeaconSensor::pin = pin;
-  pinMode(pin, INPUT);
 }
 
 uint32_t BeaconSensor::read()
 {
-  frequencyTimer.begin(UpdateFrequency, 1000000);
-  attachInterrupt(digitalPinToInterrupt(pin), CountFallingEdges, FALLING);
+  // freqTimer.begin(announceF,timertime);
+  
   // while(!timerFlag);
   // Serial.println(count);
-  return(count);
+  return(frequency);
 }
 
 int BeaconSensor::getPin()
