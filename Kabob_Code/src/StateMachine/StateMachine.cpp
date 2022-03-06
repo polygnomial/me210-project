@@ -24,13 +24,11 @@ uint8_t servoPos = 0;
 uint8_t flagLeftLine = 0;
 uint8_t flagRightLine = 0;
 
-int frequency = 0;
+volatile uint32_t frequency = 0;
 IntervalTimer myTimer;
 IntervalTimer freqTimer;
 int test = 400;
-int count = 0;
-int timertime = 1000000;
-
+volatile uint32_t count = 0;
 
 // right now code only works for state red
 uint8_t stateRed = true;
@@ -69,29 +67,30 @@ void loop() {
   // checkForZoneChange();
   // shephard.activity();
 
-  switch(state) {
-    case STATE_IDLE:
-      shephard.chassis.stop();
-      break;
-    case STATE_LOAD:
-      handleLoadState();
-      break;
-    case STATE_NAV_TARGET:
-      handleNavTargetState();
-      break;
-    case STATE_UNLOAD:
-      handleUnloadState();
-      break;
-    case STATE_NAV_LOAD:
-      handleNavLoadState();
-      break;
-    default:
-      Serial.println("What is this I do not even...");
-  }
+  // switch(state) {
+  //   case STATE_IDLE:
+  //     shephard.chassis.stop();
+  //     break;
+  //   case STATE_LOAD:
+  //     handleLoadState();
+  //     break;
+  //   case STATE_NAV_TARGET:
+  //     handleNavTargetState();
+  //     break;
+  //   case STATE_UNLOAD:
+  //     handleUnloadState();
+  //     break;
+  //   case STATE_NAV_LOAD:
+  //     handleNavLoadState();
+  //     break;
+  //   default:
+  //     Serial.println("What is this I do not even...");
+  // }
   
-  // //debug for line sensors
-  // if (curr_time - serial_time > MILLISECONDS(1/PRINT_FREQUENCY) && DEBUG){
-  //   Serial.println("---------------");
+  //debug for line sensors
+  if (curr_time - serial_time > MILLISECONDS(1/PRINT_FREQUENCY) && DEBUG){
+    Serial.println("---------------");
+    Serial.println(frequency);
   //   // Serial.println("left " + String(shephard.sensors.line.left.read()));
   //   // Serial.println("right " + String(shephard.sensors.line.right.read()));
   //   // Serial.println("center left " + String(shephard.sensors.line.center_left.read()));
@@ -100,7 +99,7 @@ void loop() {
   //   Serial.println("Beacon " + String(shephard.sensors.beacon.front.read()));
   //   Serial.println("---------------");
   //   serial_time = curr_time;
-  // }
+  }
 }
 
 void handleLoadState(void) {
