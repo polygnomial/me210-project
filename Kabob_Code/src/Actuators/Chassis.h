@@ -25,6 +25,7 @@ public:
 
   void activity(void);
   void stop(void);
+  bool movement_complete(void);
 
   /* forward and backward
    * distance (centimeters)
@@ -62,4 +63,5 @@ private:
       wheel_circumference,
       ninety_degrees;
   uint8_t executing;
+  bool complete;
 };

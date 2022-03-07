@@ -2,13 +2,13 @@
 #include "Claw.h"
 
 void Claw::open(void) {
-  servo.write(open_angle);
+  servo.write(95);
   Serial.print("opening to:");
-  Serial.println(open_angle);
+  Serial.println(95);
 }
 
 void Claw::close(void) {
-  servo.write(close_angle);
+  servo.write(122);
   Serial.print("closing to:");
-  Serial.println(close_angle);
+  Serial.println(122);
 }

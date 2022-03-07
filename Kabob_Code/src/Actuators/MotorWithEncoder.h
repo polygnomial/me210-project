@@ -14,7 +14,8 @@ public:
                    unsigned e_pin1, // polarity of these does not matter as far as I can tell
                    unsigned e_pin2,
                    uint8_t min_speed) : encoder(e_pin1, e_pin2),
-                                        Motor(f_pin, b_pin, min_speed)
+                                        Motor(f_pin, b_pin, min_speed),
+                                        complete(true)
   {
     pinMode(f_pin, OUTPUT);
     pinMode(b_pin, OUTPUT);
@@ -34,6 +35,7 @@ public:
   void move(double angle, uint8_t speed);
 
   int get_pos(void);
+  bool complete;
 
 private:
   Encoder encoder;
@@ -42,5 +44,4 @@ private:
   double target;
   double overflow;
   uint8_t min_speed;
-  uint8_t occupied;
 };

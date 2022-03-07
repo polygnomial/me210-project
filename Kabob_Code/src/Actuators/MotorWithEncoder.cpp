@@ -3,7 +3,7 @@
 
 void MotorWithEncoder::activity(){ //TODO schedule with interrupt at some frequency
   pos = abs(encoder.read());
-  
+
   // overflow protection
   if (pos > 0xFFFFFF){
     overflow +=  abs(encoder.read());
@@ -24,12 +24,11 @@ void MotorWithEncoder::stop(void) {
   overflow = 0;
   pos = 0;
   target = 0;
-  occupied = false;
+  complete = true;
 }
 
 void MotorWithEncoder::move(double angle, uint8_t speed){
-  if (occupied) return;
-  occupied = true;
+  complete = false;
 
   if (angle > 0){
     cw_at_speed(speed);

@@ -1,112 +1,96 @@
-// #include "Test.h"
-// #include <Arduino.h>
-// #include <Metro.h>
-
-// // int outputPin = 19;
-// // int inputPin = A1;
-// int PIN_SIGNAL_IN = 19;
-// volatile uint8_t outputState = false;
-// IntervalTimer myTimer;
-// IntervalTimer freqTimer;
-// int test = 400;
-// int count = 0;
-// int timertime = 1000000;
-
-// void setFreq(void);
-// void CountFallingEdges(void);
-// void announceF(void);
-
-// void setup() {
-//   // put your setup code here, to run once:
-//   Serial.begin(9600);
-//   while(!Serial);
-//   Serial.println("Hello, world!");
-//   // Initialize pins
-//   pinMode(PIN_SIGNAL_IN, INPUT);
-//   //Start output at high
-// //   digitalWrite(outputPin, HIGH);
-// //   myTimer.begin(setFreq, test);
-//   freqTimer.begin(announceF,timertime);
-//   attachInterrupt(digitalPinToInterrupt(PIN_SIGNAL_IN), CountFallingEdges, FALLING);
-// }
-
-// void loop() {
-//   // put your main code here, to run repeatedly:
-// //   noInterrupts();
-// //   test = map(analogRead(inputPin), 0, 1023, 40, 10000);
-
-// //   interrupts();
-// //   myTimer.update(test);
-// }
-
-// // void setFreq() {
-// //   outputState = !outputState;
-// //   digitalWrite(outputPin, outputState);
-// // }
-
-// void CountFallingEdges() {
-//   count ++;
-// }
-
-// void announceF() {
-//   Serial.println(count);
-//   // Serial.println((count/timertime));
-//   count=0;
-// }
-
+#include "Test.h"
 #include <Arduino.h>
-#include <Metro.h>
+#include <System.h>
 
-int outputPin = 17;
-int inputPin = A1;
-int PIN_SIGNAL_IN = 20;
-volatile uint8_t outputState = false;
-IntervalTimer myTimer;
-IntervalTimer freqTimer;
-int test = 400;
-int count = 0;
-int timertime = 1000000;
-
-void setFreq(void);
-void CountFallingEdges(void);
-void announceF(void);
+bool moved_forward;
+bool turned_left;
+bool moved_forward2;
+bool turned_right;
+bool moved_forward3;
+bool finished;
+bool moved_backward;
+bool turn_right2;
+bool moved_forward4;
+bool turned_start;
+bool moved_backward2;
+const bool red = true; 
 
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(9600);
-  while(!Serial);
-  Serial.println("Hello, world!");
-  // Initialize pins
-  pinMode(outputPin, OUTPUT);
-  pinMode(inputPin, INPUT);
-  //Start output at high
-  digitalWrite(outputPin, HIGH);
-  myTimer.begin(setFreq, test);
-  freqTimer.begin(announceF,timertime);
-  attachInterrupt(digitalPinToInterrupt(PIN_SIGNAL_IN), CountFallingEdges, FALLING);
+  shephard.claw.open();
+  delay(8000);
+  moved_forward = false;
+  turned_left = false;
+  moved_forward2 = false;
+  turned_right = false;
+  moved_forward3 = false;
+  moved_backward = false;
+  turn_right2 = false;
+  moved_forward4 = false;
+  turned_start = false;
+  moved_backward2 = false;
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  noInterrupts();
-  test = map(analogRead(inputPin), 0, 1023, 40, 10000);
-
-  interrupts();
-  myTimer.update(test);
+  shephard.activity();
+  // Serial.println(shephard.chassis.movement_complete());
+  if (!moved_forward && shephard.chassis.movement_complete()){
+    shephard.claw.close();
+    shephard.chassis.move_forward(60, 255);
+    moved_forward = true;
+  } else if (moved_forward && !turned_left && shephard.chassis.movement_complete()){
+    if (red){shephard.chassis.turn_ccw(68);}
+    else {shephard.chassis.turn_cw(68);}
+    turned_left = true;
+  }
+  else if (turned_left && !moved_forward2 && shephard.chassis.movement_complete()){
+    shephard.chassis.move_forward(188, 255);
+    moved_forward2 = true;
+  }
+  else if (moved_forward2 && !turned_right && shephard.chassis.movement_complete()){
+    if (red){shephard.chassis.turn_cw(70);}
+    else {shephard.chassis.turn_ccw(70);}
+    turned_right = true;
+  }
+  else if (turned_right && !moved_forward3 && shephard.chassis.movement_complete()){
+    shephard.chassis.move_forward(10);
+    moved_forward3 = true;
+  }
+  else if (moved_forward3 & !moved_backward && shephard.chassis.movement_complete()){
+    shephard.claw.open();
+    delay(1000);
+    shephard.chassis.move_backward(55);
+    moved_backward = true;
+  }
+  else if (moved_backward && !turn_right2 && shephard.chassis.movement_complete()){
+    if (red){shephard.chassis.turn_cw(67);}
+    else{shephard.chassis.turn_ccw(67);}
+    turn_right2 = true;
+  }
+  else if (turn_right2 && !moved_forward4 && shephard.chassis.movement_complete()){
+    shephard.chassis.move_forward(183, 255);
+    moved_forward4 = true;
+  }
+  else if (moved_forward4 && !turned_start && shephard.chassis.movement_complete()){
+    if (red){shephard.chassis.turn_ccw(60);}
+    else{shephard.chassis.turn_cw(60);}
+    turned_start = true;
+  }
+  else if (turned_start && !moved_backward2 && shephard.chassis.movement_complete()){
+    shephard.chassis.move_backward(7, 255);
+    moved_backward2 = true;
+  }
+  else if (moved_backward2 && shephard.chassis.movement_complete()){
+    delay(5000);
+    moved_forward = false;
+    turned_left = false;
+    moved_forward2 = false;
+    turned_right = false;
+    moved_forward3 = false;
+    moved_backward = false;
+    turn_right2 = false;
+    moved_forward4 = false;
+    turned_start = false;
+    moved_backward2 = false;
+  }
 }
-
-void setFreq() {
-  outputState = !outputState;
-  digitalWrite(outputPin, outputState);
-}
-
-void CountFallingEdges() {
-  count ++;
-}
-
-void announceF() {
-  Serial.println(count);
-  // Serial.println((count/timertime));
-  count=0;
-}
-
