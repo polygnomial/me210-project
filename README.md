@@ -147,7 +147,7 @@ To handle the state machine implementation, we used a similar model to the state
   }
   ```
 
-  In essence, we used a sate variable and switch statement to call different handlers depending on which state we were in.
+  In essence, we used a state variable and switch statement to call different handlers depending on which state we were in.
 
 
 ## De-Scoped Subsystems
