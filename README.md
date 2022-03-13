@@ -99,6 +99,34 @@ int LineSensor::read()
 
 which uses a simple sensor averaging technique to reliably return a binary response indicating weather the sensor is over black tape or not. 
 
+##### State Machine Implementation
+
+To handle the state machine implementation, we used a similar model to the state machine from the first lab.
+
+```
+  switch(state) {
+    case STATE_IDLE:
+      shephard.chassis.stop();
+      break;
+    case STATE_LOAD:
+      handleLoadState();
+      break;
+    case STATE_NAV_TARGET:
+      handleNavTargetState();
+      break;
+    case STATE_UNLOAD:
+      handleUnloadState();
+      break;
+    case STATE_NAV_LOAD:
+      handleNavLoadState();
+      break;
+    default:
+      Serial.println("What is this I do not even...");
+  }
+  ```
+
+  In essence, we used a sate variable and switch statement to call different handlers depending on which state we were in. 
+
 
 ## De-Scoped Subsystems
 
