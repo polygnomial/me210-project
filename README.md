@@ -28,6 +28,78 @@ TODO
 
 #### Software 💻
 
+##### Abstraction
+
+To make our code modular and abstract out lower level functionality, we implemented a multple levels of abstraction. The highest level was the '''system.h''' class which included instantiation of a Chassis class (to handle robot wheel actuation), a Claw class, and Sensors struct with all of our sensors. 
+
+```
+
+struct System
+{
+public:
+  struct Sensors
+  {
+    struct LineSensors
+    {
+      LineSensor left = LineSensor(LINE_LEFT);
+      LineSensor center_middle = LineSensor(LINE_CENTER_MIDDLE);
+      LineSensor center_left = LineSensor(LINE_CENTER_LEFT);
+      LineSensor center_right = LineSensor(LINE_CENTER_RIGHT);
+      LineSensor right = LineSensor(LINE_RIGHT);
+    };
+    LineSensors line;
+
+    struct UltrasonicSensors
+    {
+      UltrasonicSensor front = UltrasonicSensor(15);
+      UltrasonicSensor periscope = UltrasonicSensor(15);
+    };
+    UltrasonicSensors ultra;
+  };
+  Sensors sensors;
+  Chassis chassis = Chassis(RIGHT_FORWARD_PIN,
+                            RIGHT_BACKWARD_PIN,
+                            LEFT_FORWARD_PIN,
+                            LEFT_BACKWARD_PIN,
+                            ENCODER_RIGHT_PIN1,
+                            ENCODER_RIGHT_PIN2,
+                            ENCODER_LEFT_PIN1,
+                            ENCODER_LEFT_PIN2,
+                            HUB_TO_HUB_DISTANCE,
+                            WHEEL_CIRCUMFERENCE,
+                            MOTOR_MIN_SPEED);
+  Claw claw = Claw(SERVO_PIN, OPEN_CLAW_ANGLE, CLOSE_CLAW_ANGLE);
+
+  void activity(void);
+};
+
+extern struct System shephard;
+```
+
+The Chassis class held instantiation of a Motor class or an EncoderMotor class which is a subclass of Motor with added functionality to handle checking the hall sensors used by the encoder. Within the Sensors struct, we instantiate all of our sensor classes which each provided simple interfaces to get data from the sensors. For instance, within the linesensor class we have the function 
+
+```
+int LineSensor::read()
+{
+  int value = 0;
+  for (int i = 0; i < 10; i++)
+  {
+    value += analogRead(pin);
+  }
+  value /= 10;
+
+  if(value <= lineThreshold){
+    return 0;
+  }
+  else{
+    return 1;
+  }
+}
+```
+
+which uses a simple sensor averaging technique to reliably return a binary response indicating weather the sensor is over black tape or not. 
+
+
 ## De-Scoped Subsystems
 
 #### Beacon Sensing
