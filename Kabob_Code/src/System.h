@@ -8,13 +8,13 @@
 
 #define RIGHT_BACKWARD_PIN 4
 #define RIGHT_FORWARD_PIN 3
-#define LEFT_BACKWARD_PIN 10
-#define LEFT_FORWARD_PIN 9
+#define LEFT_BACKWARD_PIN 9
+#define LEFT_FORWARD_PIN 10
 
-#define ENCODER_RIGHT_PIN1 8
-#define ENCODER_RIGHT_PIN2 11
-#define ENCODER_LEFT_PIN1 7
-#define ENCODER_LEFT_PIN2 5
+#define ENCODER_RIGHT_PIN1 7
+#define ENCODER_RIGHT_PIN2 8
+#define ENCODER_LEFT_PIN1 2
+#define ENCODER_LEFT_PIN2 1
 
 #define SERVO_PIN 6
 
@@ -27,10 +27,14 @@
 #define LINE_CENTER_RIGHT 16
 #define LINE_CENTER_LEFT 17
 
+#define STEPPER_DIR 16
+#define STEPPER_STEP 15
+
 #define HUB_TO_HUB_DISTANCE 25.1  // cm
 #define WHEEL_CIRCUMFERENCE 31.33 // cm
 #define MOTOR_MIN_SPEED 55        // Measured with both motors running.
                                   // If only 1 motor is running the min will be higher
+
 
 struct System
 {
@@ -65,7 +69,9 @@ public:
                             ENCODER_LEFT_PIN2,
                             HUB_TO_HUB_DISTANCE,
                             WHEEL_CIRCUMFERENCE,
-                            MOTOR_MIN_SPEED);
+                            MOTOR_MIN_SPEED,
+                            STEPPER_DIR,
+                            STEPPER_STEP);
   Claw claw = Claw(SERVO_PIN, OPEN_CLAW_ANGLE, CLOSE_CLAW_ANGLE);
 
   void activity(void);

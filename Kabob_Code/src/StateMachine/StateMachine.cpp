@@ -1,9 +1,11 @@
 #include "StateMachine.h"
 
-#define VELOCITY 255
+#define VELOCITY 100
 
-#define Right_TURN_TIME       4000
-#define SECOUND_TURN_TIME     2500
+#define Right_TURN_TIME       3000
+#define SECOUND_TURN_TIME     1000
+
+uint8_t DEBUG = true; 
 
 States_t state;
 States_r line_state;
@@ -20,6 +22,14 @@ uint8_t servoPos = 0;
 uint8_t flagLeftLine = 0;
 uint8_t flagRightLine = 0;
 
+
+// right now code only works for state red
+uint8_t stateRed = true;
+
+//if this is true, do not allow motor to be set on different course
+// unless extreme reason (i.e. hole)
+uint8_t navigationSet = 0;
+
 unsigned long flag_time;
 
 void setup() {
@@ -27,15 +37,13 @@ void setup() {
   Serial.begin(9600);
   shephard.claw.open();
   while(!Serial);
-  //delay(10000);
-  delay(3000);
+  delay(5000);
+
   //times
   curr_time = millis();
   serial_time = millis();
   state_time = millis();
   flag_time = millis();
-
-  
 
   changeStateTo(STATE_LOAD);
   
@@ -47,8 +55,7 @@ void loop() {
   checkGlobalEvents();
   checkFlags();
   checkForZoneChange();
-
-  // TO LINE FOLLOW: Must be in state = state_nav_target
+  shephard.activity();
 
   switch(state) {
     case STATE_IDLE:
@@ -71,14 +78,14 @@ void loop() {
   }
 
   //debug for line sensors
-  if (curr_time - serial_time > MILLISECONDS(1/PRINT_FREQUENCY) ){
+  if (curr_time - serial_time > MILLISECONDS(1/PRINT_FREQUENCY) && DEBUG){
     Serial.println("---------------");
-    //Serial.println("left " + String(shephard.sensors.line.left.read()));
-    //Serial.println("right " + String(shephard.sensors.line.right.read()));
-    //Serial.println("center left " + String(shephard.sensors.line.center_left.read()));
-    //Serial.println("center middle " + String(shephard.sensors.line.center_middle.read()));
-    //Serial.println("center right " + String(shephard.sensors.line.center_right.read()));
-    //Serial.println("---------------");
+    Serial.println("left " + String(shephard.sensors.line.left.read()));
+    Serial.println("right " + String(shephard.sensors.line.right.read()));
+    Serial.println("center left " + String(shephard.sensors.line.center_left.read()));
+    Serial.println("center middle " + String(shephard.sensors.line.center_middle.read()));
+    Serial.println("center right " + String(shephard.sensors.line.center_right.read()));
+    Serial.println("---------------");
     serial_time = curr_time;
   }
 }
@@ -89,9 +96,9 @@ void handleLoadState(void) {
     shephard.claw.open(); 
   } else if (timeInState > 1000 && timeInState < 2000) {
     shephard.claw.close(); 
-  } else if (timeInState > 2000  && timeInState < 5000) {
-    shephard.chassis.move_forward_at_speed(VELOCITY);
-  } else if (timeInState > 5000) { 
+  } else if (timeInState > 2000  && timeInState < 2100) {
+    shephard.chassis.move_forward(20, 150);
+  } else if (timeInState > 3500) { 
     changeStateTo(STATE_NAV_TARGET);
     changeZoneTo(ZONE_1);
   }
@@ -102,9 +109,9 @@ void handleUnloadState(void) {
   if (timeInState < 1000) {
     shephard.claw.open(); 
   } else if (timeInState > 1000 && timeInState < 4000) {
-    shephard.chassis.move_backward_at_speed(VELOCITY);
+    shephard.chassis.move_backward(15, VELOCITY);
   } else if (timeInState > 4000 && timeInState < 10000) {
-    shephard.chassis.turn_left_at_speed(VELOCITY);
+    shephard.chassis.turn_ccw(360, VELOCITY);
   } else if (timeInState > 10000) {
     changeStateTo(STATE_NAV_LOAD);
   } 
@@ -127,22 +134,22 @@ void handleNavTargetState(void){
       break;
     case ZONE_3:
       // turn 90 degrees and then line follow
-      if (t > 1000 && t < 1000+Right_TURN_TIME) {
-        shephard.chassis.turn_right(200);
-      } else {
+      if (t > 300 && t < 300+300) {
+        makeFirstTurn();
+      } else if (t < 4000) {
         lineFollow();
       }
       break;
     case ZONE_4:
       // turn less than 90 degrees and then line follow
-      if (t < SECOUND_TURN_TIME) {
-        shephard.chassis.turn_left(200);
-      } else {
+      if (t < 100) {
+        shephard.chassis.turn_ccw(100);
+      } else if (t > 4000) {
         lineFollow();
       }
       break;
     case ZONE_TARGET:
-      if (t < 1000) {
+      if (t < 400) {
         shephard.chassis.move_forward_at_speed(VELOCITY);
       } else {
         changeStateTo(STATE_UNLOAD);
@@ -178,10 +185,10 @@ void checkForZoneChange(void) {
     } else if (right && zone == ZONE_2) {
       setFlag(flagRightLine);
       changeZoneTo(ZONE_3);
-    } else if (left && zone == ZONE_3 && curr_time - zone_time > 5000) {
+    } else if (left && zone == ZONE_3 && curr_time - zone_time > 2000) {
       changeZoneTo(ZONE_4);
       setFlag(flagLeftLine);
-    } else if (left && zone == ZONE_4 && curr_time - zone_time > 6000) {
+    } else if (left && zone == ZONE_4 && curr_time - zone_time > 2000) {
       changeZoneTo(ZONE_TARGET);
     }
 }
@@ -210,24 +217,34 @@ void lineFollow(void) {
 
     switch(line_state) {
       case STATE_ON_LINE:
-        shephard.chassis.move_forward_at_speed(VELOCITY);
+        shephard.chassis.move_forward_at_speed(130);
         break;
       case STATE_OFF_RIGHT:
-        shephard.chassis.veer_forward(250, 180);
+        shephard.chassis.veer_forward(140, 100);
         break;
       case STATE_OFF_SLIGHT_RIGHT:
-        shephard.chassis.veer_forward(250, 200);
+        shephard.chassis.veer_forward(130, 100);
         break;
       case STATE_OFF_LEFT:
-        shephard.chassis.veer_forward(180, 250);
+        shephard.chassis.veer_forward(100, 140);
         break;
       case STATE_OFF_SLIGHT_LEFT:
-        shephard.chassis.veer_forward(200, 250);
+        shephard.chassis.veer_forward(100, 130);
         break;
       default:
         Serial.println("humm");
     }
 
+}
+
+void makeFirstTurn() {
+  if (stateRed) shephard.chassis.turn_cw(90, 100);
+  else shephard.chassis.turn_ccw(90, 100);
+}
+
+void makeSecondTurn() {
+  if (stateRed) shephard.chassis.turn_ccw(70, 100);
+  else shephard.chassis.turn_ccw(70, 100);
 }
   
 uint8_t TestForKey(void) {

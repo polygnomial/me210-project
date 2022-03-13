@@ -1,7 +1,7 @@
 #include "Arduino.h"
 #include "MotorWithEncoder.h"
 
-void MotorWithEncoder::activity(){
+void MotorWithEncoder::activity(){ //TODO schedule with interrupt at some frequency
   pos = abs(encoder.read());
   
   // overflow protection
@@ -24,9 +24,13 @@ void MotorWithEncoder::stop(void) {
   overflow = 0;
   pos = 0;
   target = 0;
+  occupied = false;
 }
 
 void MotorWithEncoder::move(double angle, uint8_t speed){
+  if (occupied) return;
+  occupied = true;
+
   if (angle > 0){
     cw_at_speed(speed);
   } else {

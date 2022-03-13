@@ -6,7 +6,7 @@
 #define ENCODER_OPTIMIZE_INTERRUPTS
 #include <Encoder.h>
 
-class MotorWithEncoder : Motor
+class MotorWithEncoder : public Motor
 {
 public:
   MotorWithEncoder(unsigned f_pin,
@@ -42,4 +42,5 @@ private:
   double target;
   double overflow;
   uint8_t min_speed;
+  uint8_t occupied;
 };

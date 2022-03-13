@@ -46,5 +46,7 @@ void changeLineStateTo(States_r s);
 void changeStateTo(States_t s);
 void changeZoneTo(Zones_t z);
 void setFlag(uint8_t flag);
+void makeSecondTurn(void);
+void makeFirstTurn(void);
 
 /*---------------Module Variables---------------------------*/
