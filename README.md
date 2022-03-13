@@ -30,11 +30,29 @@ We initially installed faster motors on our robot, however we quickly realized t
 
 #### Electrical ⚡
 
+##### Power
+We chose to use a baseline of +7.2V to power the robot with two batteries in parallel instead of +14.4V in series due to the input ratings of our voltage converter. We actually only used one battery the entire time and simply recharged it to keep the structure smaller and wiring simpler, but if we had a few more days to implement our other systems, we would have used two in parallel to keep the system operating voltage more consistent. The only MVP system directly connected to 7.2V is the main motor driver, all other systems use voltage from our two voltage converters.
+
+![Power System](/Website_Files/power_system.png)*Note: ignore Teensy data connections, this is just to demonstrate our power systems*
+
+We used the LM2596 to create a +5V output to power the Teensy LC with the back USB trace cut so that we ensured consistent ground and power sources (avoiding computer power supply) and only used the USB input for TX/RX. We used the Teensy incorporated 3.3V converter to create a 3.3V power line. We were very careful to not over draw current from these two power converters, and if we were to implement our elevator design, we would have added a second LM2596 converter to remain within the 3A maximum rating.
+
+#### Motors
+We initially began our MVP design with larger drive motors (Gear Motor w/Encoder, model No.GB37Y3530-12V-251R) with embedded encoders, but these motors were too fast for our three central line sensors to maintain stable line following, so we changed to smaller motors without encoders for our checkoff where we used a line following method. Abandoning line sensing after our checkoff for more exciting navigation techniques, we changed our motors again for the encoder motors for increased torque and speed. Our two chassis motors are driven by the L298N motor driver in an H-Bridge configuration with PWM control from the Teensy.
+
+![Motors](/Website_Files/motors.png)*Note: Doesn't include non-MVP stepper motor and associated voltage converter*
+
+The collection claws are driven by a small HS-322HD servo motor, which we could easily write to open and close and specific angles. The motor provided far enough torque to close the claw. One challenge was that we had to change the given “close” and “open” angles each time we rebuilt the claw due to the servo motor’s reference angle changing.
+
+We had one final stepper motor (not included on the schematic) that ran our elevator up and down to exact heights. This stepper design was almost identical to that of Lab 2, but we had inconsistent behavior because our draw voltage of 7.2V was a bit too low for the stepper. We added a voltage converter to increase the input voltage, which fixed inconsistencies with the stepper.
+
+#### Line Sensors
+
 #### Software 💻
 
 ##### Abstraction
 
-To make our code modular and abstract out lower level functionality, we implemented a multple levels of abstraction. The highest level was the '''system.h''' class which included instantiation of a Chassis class (to handle robot wheel actuation), a Claw class, and Sensors struct with all of our sensors. 
+To make our code modular and abstract out lower level functionality, we implemented a multple levels of abstraction. The highest level was the '''system.h''' class which included instantiation of a Chassis class (to handle robot wheel actuation), a Claw class, and Sensors struct with all of our sensors.
 
 ```
 
@@ -80,7 +98,7 @@ public:
 extern struct System shephard;
 ```
 
-The Chassis class held instantiation of a Motor class or an EncoderMotor class which is a subclass of Motor with added functionality to handle checking the hall sensors used by the encoder. Within the Sensors struct, we instantiate all of our sensor classes which each provided simple interfaces to get data from the sensors. For instance, within the linesensor class we have the function 
+The Chassis class held instantiation of a Motor class or an EncoderMotor class which is a subclass of Motor with added functionality to handle checking the hall sensors used by the encoder. Within the Sensors struct, we instantiate all of our sensor classes which each provided simple interfaces to get data from the sensors. For instance, within the linesensor class we have the function
 
 ```
 int LineSensor::read()
@@ -101,7 +119,7 @@ int LineSensor::read()
 }
 ```
 
-which uses a simple sensor averaging technique to reliably return a binary response indicating weather the sensor is over black tape or not. 
+which uses a simple sensor averaging technique to reliably return a binary response indicating weather the sensor is over black tape or not.
 
 ##### State Machine Implementation
 
@@ -129,7 +147,7 @@ To handle the state machine implementation, we used a similar model to the state
   }
   ```
 
-  In essence, we used a sate variable and switch statement to call different handlers depending on which state we were in. 
+  In essence, we used a sate variable and switch statement to call different handlers depending on which state we were in.
 
 
 ## De-Scoped Subsystems
@@ -147,3 +165,6 @@ Mere days before the competition, after a 1am caffeine fueled work session, vari
 - It's a good idea to read the design specification very carefully and understand when something is sarcastic (bloody Americans who don’t know how to use sarcasm properly).
 - We tried to literally “think outside the box” but it would’ve turned out better for us if we’d tried to think inside the box. Maybe this is a Stanford thing. IDK if this is good advice for the real world.
 - 3d printing is more flexible since you can do geometries that have 90° angles in them (like brackets), as well as totally custom geometry
+
+# TODO
+- in electronics add name of smaller motors if we can find them
