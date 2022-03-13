@@ -19,10 +19,10 @@ We initially installed faster motors on our robot, however we quickly realized t
 
 #### State Machine
 ##### MVP
-![MVP State Machine](/Website_Files/stateMachineMVP.png)
-##### Competition Robot
+<img src="Website_Files/stateMachineMVP.png" width="50%">
 
-![Competition State Machine](/Website_Files/competitionDiagram.png)
+##### Competition Robot
+<img src="Website_Files/competitionDiagram.png" width="80%">
 
 ## MVP Subsystem Overviews
 #### Mechanical ⚙️
