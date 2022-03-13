@@ -18,7 +18,11 @@ The claw used a servo in order to open and close at the right points in our stat
 We initially installed faster motors on our robot, however we quickly realized this made it very difficult for us to create reliable line following code. To combat this we switched out our motors for a much slower set without encoders that gave the robot enough time to react to deviations in the path (sophomore year crisis when they think they might do Symbolic Systems instead of CS).
 
 #### State Machine
-TODO
+##### MVP
+![MVP State Machine](/Website_Files/stateMachineMVP.png)
+##### Competition Robot
+
+![Competition State Machine](/Website_Files/competitionDiagram.png)
 
 ## MVP Subsystem Overviews
 #### Mechanical ⚙️
