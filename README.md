@@ -31,9 +31,25 @@ We initially installed faster motors on our robot, however we quickly realized t
 CAD is available [in Fusion 360 format](./CAD/Assembly.f3z) and as a [STEP file](./CAD/Assembly.step). These may be used to modify the design or generate STLs for printing and DXFs for laser cutting. View the CAD online in 3D [here](https://a360.co/3q2kXgB)
 
 ##### Chassis
-Our chassis design went through three iterations. The first iteration was very simple. It consisted of a rectangle with attachment points for the wheels and claw. By the secound iteration, we added more space for electronics which we were taping on originally. We also added a  mechanism for attaching line sensors to the bottom of the chassis. The secound iteration also had a secound layer that connected to the first layed with laser cut standoffs. While the secound iteration began looking like a robot, it was relativley messesy mechanically. The laser cut standoffs introduced signifcant play into the design and the sensors on the bottom (which were also a friction fit of laser cut pieces) kept on falling out. Additionally out electronic were still mostly mounted on a breadboard the was taped to the secound layer. Debugging became very challenging as our design increased in complexity. We designed out third iteration to address many of the pain points introduced by the secound. We started using 3D printed standoffs with bolts in order to create a more seucre attachment between the different layers. Similarly, we moved over to entirely 3D printed sensor mounts that were also attached to the chassis with bolts. In addition to the more secure attachment points, we added attachment points for the motor driver and bread board to create a more clean design and simplify debugging. We finally added a spot for the power switch and holes to pass the wires through.
 
-![Chasis](./Images/chassis.png)
+Our chassis design went through three iterations. The first iteration was very simple. It consisted of a rectangle with attachment points for the wheels and claw. By the second iteration, we added more space for electronics which we were taping on originally. We also added a  mechanism for attaching line sensors to the bottom of the chassis. The second iteration also had a second layer that connected to the first layer with laser cut standoffs. While the second iteration began looking like a robot, it was relatively messy mechanically. The laser cut standoffs introduced significant play into the design and the sensors on the bottom (which were also a friction fit of laser cut pieces) kept on falling out. Additionally our electronics were still mostly mounted on a breadboard that was taped to the second layer. Debugging became very challenging as our design increased in complexity. We designed our third iteration to address many of the pain points introduced by the second. We started using 3D printed standoffs with bolts in order to create a more secure attachment between the different layers. Similarly, we moved over to entirely 3D printed sensor mounts that were also attached to the chassis with bolts. In addition to the more secure attachment points, we added attachment points for the motor driver and bread board to create a more clean design and simplify debugging. We finally added a spot for the power switch and holes to pass the wires through.
+
+![Chassis](/Website_Files/chassis.png)
+
+##### Claw
+
+While brainstorming for a ball mechanism, we wanted to design something that was simple but also general enough to handle the large megasheep and the action of lifting. The mechanism we came up with was a claw actuated by a single servo with interlocking gears to make both sides of the claw move in tandem. We printed out two iterations of the claw in order to fine tune the shape and mechanism. For the second iteration, we made the claw slightly more compact in the forward-backward direction, increased the slope inside the claw to guarantee that the balls would roll out when it opened, and created a more stable mechanism for attaching the servo to the gear.
+
+![Claw](/Website_Files/claw.png)
+![Claw Mech](/Website_Files/claw2.png)
+
+##### Crane
+
+One of the original goals for our robot was to deposit balls in the upper basket. To achieve this, we decided to mount the claw on linear bearings and lift it with a stepper motor paired and a timing belt similar to how many 3D printers work. In our design we mistakenly assumed that the robot could be disassembled to meet the size requirement based on a joke in the handout that we read too literally. Once we realized our error it was too late to design a new lifting mechanism.
+
+![Crane](/Website_Files/Crane.png)
+
+![Full Design](/Website_Files/w_crane.png)
 
 #### Electrical ⚡
 ##### Power
