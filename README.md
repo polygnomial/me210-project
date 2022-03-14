@@ -1,4 +1,5 @@
-# 🐑 ME210 Final Project — Team Schleep 🐑
+# 🐑 ME210 Final Project 🐑
+# Team Schleep
 _No sheep may leave the flock_
 ## Meet the Team 🏆
 ![Team Photo](./Images/team-photo.png)*| Paxton: Engineering Physics | 23’
@@ -87,7 +88,7 @@ After the transresistive amplifier and high pass filter, we added two 2-stage lo
 
 ![Beacon_Sensor_2](./Images/beacon_sensor_2.png)*Final beacon sensor design*
 
-The circuit we actually ended up using simply returned a filtered, amplified signal of the raw frequency output, which we could connect to the teensy to determine if the input signal is 3333 Hz or 910 Hz. for this circuit the aim was to make the entire circuit use only one four stage opamp package. This circuit uses a unity buffer attached to ground as a reference to the high pass filter. Then the signal is fed into a simple non-inverting amplifier and finally into an inverting schmitt trigger that adds correcting hysteresis to smooth out the output frequency. This circuit outputted beautiful signals that accurately provided pointing data, but it again suffered from the fact that the 3333 Hz signal was far brighter and would interfere with the 910 Hz signal. We also noticed that the white board reflected the signals a bit which led to messy measurements if the phototransistor was pointed too close to the ground.
+The circuit we actually ended up using simply returned a filtered, amplified signal of the raw frequency output, which we could connect to the teensy to determine if the input signal is 3333 Hz or 910 Hz. for this circuit the aim was to make the entire circuit use only one four stage opamp package. This circuit uses a unity buffer attached to ground as a reference to the high pass filter. Then the signal is fed into a simple non-inverting amplifier and finally into an inverting Schmitt trigger that adds correcting hysteresis to smooth out the output frequency. This circuit outputted beautiful signals that accurately provided pointing data, but it again suffered from the fact that the 3333 Hz signal was far brighter and would interfere with the 910 Hz signal. We also noticed that the white board reflected the signals a bit which led to messy measurements if the phototransistor was pointed too close to the ground.
 
 #### Ultrasonic Sensors (De-Scoped)
 Although we didn’t use them for the MVP or contest, we had planned on using the lab provided HC-SR04 ultrasonic sensors to determine distance to a wall and for the elevator to determine if it was in front of the upper basket. We got the sensors reading out distance but did not incorporate them into our abstracted code. Find the basic schematic on our github.
@@ -198,22 +199,15 @@ To handle the state machine implementation, we used a similar model to the state
 
   In essence, we used a state variable and switch statement to call different handlers depending on which state we were in.
 
-
-## De-Scoped Subsystems
-
-#### Beacon Sensing
-We implemented some fancy circuits for detecting an IR beacon for navigation through the wild offroad (off-the-black-line) regions of the game arena. We ultimately decided not to include these in the final robot because of large variations in the beacons in the arena, which made reproducible performance difficult.
-
 ## Competition Robot
 Mere days before the competition, after a 1am caffeine fueled work session, various members of our team came to the depressing realization that neither the crane nor the beacon sensors were going to work in time for the Final Competition. Consequently we returned to our MVP, and brainstormed different ways to make our beautiful robot ready for the real world. This took the form of returning to the faster motors, but this time we decided to make full use of the encoders. As our encoders were relatively accurate, we were able to zoom across the obstacle course, ignoring the lines and the holes, taking 22 units every quarter to place our Stanford sheep in their pen (Facebook/ Microsoft/ Google internships). We tried to use the encoders to return our robot to their starting position, however this movement was much less accurate due to the variability of the board, the robot starting position and how the robot turned. If we had more time (like 3 more hours) we would have combined our line sensing with the encoders in order to ensure that our robot returned to the exact same position each time.
 
 ## Lessons Learned
-While our team started off strong, we hit a number of issues along the way that impeded our progress and might have been avoided. 
+While our team started off strong, we hit a number of issues along the way that impeded our progress and might have been avoided.
 
-We were quickly able to identify an MVP and define how we wanted to meet all of our different priorities for the "beat-the-brick" version of our robot. Consequently, we were able to reach our check off point relatively quickly as we all worked efficiently and cohesively to meet this goal. However after this point we failed to have another proper strategy meeting where we decided exactly what our priorities were for our final competition robot. Between our check off point and the competition we all worked on different aspects of the design that eventually failed to come together, forcing us to revert to just using encoders and the claw to score points during the competition. Reflecting on this experience it is clear that one of two strategy meetings with the entire team present would have been enough to streamline our goals and ensure our work was cohesive enough to deliver a final competition-ready robot that utilized a choice set of subsystems. 
+We were quickly able to identify an MVP and define how we wanted to meet all of our different priorities for the "beat-the-brick" version of our robot. Consequently, we were able to reach our check off point relatively quickly as we all worked efficiently and cohesively to meet this goal. However after this point we failed to have another proper strategy meeting where we decided exactly what our priorities were for our final competition robot. Between our check off point and the competition we all worked on different aspects of the design that eventually failed to come together, forcing us to revert to just using encoders and the claw to score points during the competition. Reflecting on this experience it is clear that one of two strategy meetings with the entire team present would have been enough to streamline our goals and ensure our work was cohesive enough to deliver a final competition-ready robot that utilized a choice set of subsystems.
 
 Practically, we also learnt that 3D printing components can be much more flexible and efficient as this mode allows geometries that have 90 degree angles (such as custom brackets), as well as other custom geographies. We also learnt the importance of reading the design specifications very carefully, as this unfortunately limited our design very late in the competition.
 
-
-# TODO
-- in electronics add name of smaller motors if we can find them
+## Build our Robot!
+If you would like to build our robot, all the necessary schematics, CAD, and code is available on our github repository linked at the top of this webpage. Feel free to reach out about specific questions and components if not mentioned above. :- )

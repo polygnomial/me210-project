@@ -1,3 +1,3 @@
 (sym_lib_table
-  (lib (name teensy)(type Legacy)(uri ${KIPRJMOD}/teensy.lib)(options "")(descr ""))
+  (lib (name ME210_Final_Project-rescue)(type Legacy)(uri ${KIPRJMOD}/ME210_Final_Project-rescue.lib)(options "")(descr ""))
 )
