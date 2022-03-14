@@ -40,12 +40,14 @@ Our chassis design went through three iterations. The first iteration was very s
 
 While brainstorming for a ball mechanism, we wanted to design something that was simple but also general enough to handle the large megasheep and the action of lifting. The mechanism we came up with was a claw actuated by a single servo with interlocking gears to make both sides of the claw move in tandem. We printed out two iterations of the claw in order to fine tune the shape and mechanism. For the second iteration, we made the claw slightly more compact in the forward-backward direction, increased the slope inside the claw to guarantee that the balls would roll out when it opened, and created a more stable mechanism for attaching the servo to the gear.
 
+
+
 ![Claw](/Images/claw.png)
 ![Claw Mech](/Images/claw2.png)
 
 ##### Crane
 
-One of the original goals for our robot was to deposit balls in the upper basket. To achieve this, we decided to mount the claw on linear bearings and lift it with a stepper motor paired and a timing belt similar to how many 3D printers work. In our design we mistakenly assumed that the robot could be disassembled to meet the size requirement based on a joke in the handout that we read too literally. Once we realized our error it was too late to design a new lifting mechanism.
+We designed a very large mechanism for moving the claw 12” up to a basket for double points. To achieve this, we decided to mount the claw on linear bearings and lift it with a stepper motor paired and a timing belt similar to how many 3D printers work. The official rules stated “your robot may be dismembered to conform to this specification”—this was a point of contention among many of the contenders. We interpreted this as “your robot may have some of its members detach during the weigh-in (fitting)”. The referees ruled that this interpretation was fraught, so we descoped this subsystem. Do datasheets have jokes in them? That would be funny.
 
 ![Crane](/Images/Crane.png)
 
@@ -202,16 +204,16 @@ To handle the state machine implementation, we used a similar model to the state
 #### Beacon Sensing
 We implemented some fancy circuits for detecting an IR beacon for navigation through the wild offroad (off-the-black-line) regions of the game arena. We ultimately decided not to include these in the final robot because of large variations in the beacons in the arena, which made reproducible performance difficult.
 
-#### Crane Elevator
-We designed a very large mechanism for moving the claw 12” up to a basket for double points. The official rules stated “your robot may be dismembered to conform to this specification”—this was a point of contention among many of the contenders. We interpreted this as “your robot may have some of its members detach during the weigh-in (fitting)”. The referees ruled that this interpretation was fraught, so we descoped this subsystem. Do datasheets have jokes in them? That would be funny.
-
 ## Competition Robot
 Mere days before the competition, after a 1am caffeine fueled work session, various members of our team came to the depressing realization that neither the crane nor the beacon sensors were going to work in time for the Final Competition. Consequently we returned to our MVP, and brainstormed different ways to make our beautiful robot ready for the real world. This took the form of returning to the faster motors, but this time we decided to make full use of the encoders. As our encoders were relatively accurate, we were able to zoom across the obstacle course, ignoring the lines and the holes, taking 22 units every quarter to place our Stanford sheep in their pen (Facebook/ Microsoft/ Google internships). We tried to use the encoders to return our robot to their starting position, however this movement was much less accurate due to the variability of the board, the robot starting position and how the robot turned. If we had more time (like 3 more hours) we would have combined our line sensing with the encoders in order to ensure that our robot returned to the exact same position each time.
 
 ## Lessons Learned
-- It's a good idea to read the design specification very carefully and understand when something is sarcastic (bloody Americans who don’t know how to use sarcasm properly).
-- We tried to literally “think outside the box” but it would’ve turned out better for us if we’d tried to think inside the box. Maybe this is a Stanford thing. IDK if this is good advice for the real world.
-- 3d printing is more flexible since you can do geometries that have 90° angles in them (like brackets), as well as totally custom geometry
+While our team started off strong, we hit a number of issues along the way that impeded our progress and might have been avoided. 
+
+We were quickly able to identify an MVP and define how we wanted to meet all of our different priorities for the "beat-the-brick" version of our robot. Consequently, we were able to reach our check off point relatively quickly as we all worked efficiently and cohesively to meet this goal. However after this point we failed to have another proper strategy meeting where we decided exactly what our priorities were for our final competition robot. Between our check off point and the competition we all worked on different aspects of the design that eventually failed to come together, forcing us to revert to just using encoders and the claw to score points during the competition. Reflecting on this experience it is clear that one of two strategy meetings with the entire team present would have been enough to streamline our goals and ensure our work was cohesive enough to deliver a final competition-ready robot that utilized a choice set of subsystems. 
+
+Practically, we also learnt that 3D printing components can be much more flexible and efficient as this mode allows geometries that have 90 degree angles (such as custom brackets), as well as other custom geographies. We also learnt the importance of reading the design specifications very carefully, as this unfortunately limited our design very late in the competition.
+
 
 # TODO
 - in electronics add name of smaller motors if we can find them
