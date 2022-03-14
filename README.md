@@ -210,4 +210,4 @@ We were quickly able to identify an MVP and define how we wanted to meet all of 
 Practically, we also learnt that 3D printing components can be much more flexible and efficient as this mode allows geometries that have 90 degree angles (such as custom brackets), as well as other custom geographies. We also learnt the importance of reading the design specifications very carefully, as this unfortunately limited our design very late in the competition.
 
 ## Build our Robot!
-If you would like to build our robot, all the necessary schematics, CAD, and code is available on our github repository linked at the top of this webpage. Feel free to reach out about specific questions and components if not mentioned above. :- )
+If you would like to build our robot, all the necessary schematics, CAD, and code is available on our github repository linked at the top of this webpage. Feel free to reach out about specific questions and components if not mentioned above. Note: for code run during competition and not MVP check out the hardcode branch on github. :- )
