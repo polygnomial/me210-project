@@ -29,7 +29,6 @@ We initially installed faster motors on our robot, however we quickly realized t
 <iframe src="https://myhub.autodesk360.com/ue2c4af35/shares/public/SH35dfcQT936092f0e431237ee60296c581d?mode=embed" width="1024" height="768" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"  frameborder="0"></iframe>
 
 #### Electrical ⚡
-
 ##### Power
 We chose to use a baseline of +7.2V to power the robot with two batteries in parallel instead of +14.4V in series due to the input ratings of our voltage converter. We actually only used one battery the entire time and simply recharged it to keep the structure smaller and wiring simpler, but if we had a few more days to implement our other systems, we would have used two in parallel to keep the system operating voltage more consistent. The only MVP system directly connected to 7.2V is the main motor driver, all other systems use voltage from our two voltage converters.
 
@@ -46,7 +45,32 @@ The collection claws are driven by a small HS-322HD servo motor, which we could 
 
 We had one final stepper motor (not included on the schematic) that ran our elevator up and down to exact heights. This stepper design was almost identical to that of Lab 2, but we had inconsistent behavior because our draw voltage of 7.2V was a bit too low for the stepper. We added a voltage converter to increase the input voltage, which fixed inconsistencies with the stepper.
 
-#### Line Sensors
+#### Line/Hole Sensors
+We used the IR reflection sensors available in the lab (QRB1134) to implement a line following system. Testing the lab conditions and the height of our chassis, we finalized on an emitter load resistor of 100 ohms and a collector load resistor of 50k ohms. This allowed us to differentiate black tape from white floor and was sensitive enough to differentiate hole from black tape for hole detection.
+
+![Line_Sensors](/Website_Files/line_sensors.png)
+
+#### Beacon Sensors (De-Scoped)
+The last two weeks of the project after we were confident in our MVP, our team changed from a line following strategy to a beacon sensing approach while we developed the elevator system to deliver balls to the upper basket. We found several challenges in the beacon sensing and only got the sensors to work reliably two days before the competition once it was too late to fully implement the technology. However, we built and successfully tested four of the beacon sensors and developed simple code that read the modified signal to determine the frequency and therefore the beacon “color”. All beacon sensor designs used the LTR-3208E phototransistor attached to a transresistive amplifier that linearized the output signal from the LTR. We also noticed a pervasive low frequency signal that was easily filtered out on both designs by a single passive RC high pass filter with Fc = 160 Hz.
+
+Our first approach to beacon sensing that we ultimately abandoned due to the complexity of the circuit was a selective filtering approach that filtered out one of the beacons and only returned a binary high/low voltage depending if the other beacon was in sight. We fully built out a model for the 910 Hz signal and successfully tested it, but the amount of components required for the circuit and the need to build one for red and one for blue led us to choose a different beacon sensing option. However, this complex circuit was a really fun challenge.
+
+![Beacon_Sensor_1](/Website_Files/beacon_sensor_1.png)*First beacon sensor design*
+
+
+After the transresistive amplifier and high pass filter, we added two 2-stage low pass filters separated by a unity buffer to eliminate the 3333 Hz red signal. The 3333 Hz signal was far stronger than the 910 Hz signal for some reason, so we had to use two steep cutoffs to dampen the signal well. Additionally, we had the RC filters pull the signal average to 3.3V to be within the operating range of the opamp which would otherwise clip the signal at 0V. After the second 2-stage filter, we added another unity buffer and then a peak detector circuit that would keep only the high signal of about 3.5V when pointed at 910 Hz compared to 3V without signal. I had to add a load resistor to the peak detector connected to ground to solve capacitance loading issues after adding another unity buffer after the peak detector. Finally, to turn the 3V no-signal, 3.5 V signal output to 0 V no-signal, 3.3 V signal, I added a difference amplifier circuit to return the final signal as a digital 1 or 0 output voltage. One change I would add to this circuit is adding another unity buffer to the references of the RC passive filters. Here’s the final product:
+
+![Beacon_Sensor_2](/Website_Files/beacon_sensor_2.png)*Final beacon sensor design*
+
+The circuit we actually ended up using simply returned a filtered, amplified signal of the raw frequency output, which we could connect to the teensy to determine if the input signal is 3333 Hz or 910 Hz. for this circuit the aim was to make the entire circuit use only one four stage opamp package. This circuit uses a unity buffer attached to ground as a reference to the high pass filter. Then the signal is fed into a simple non-inverting amplifier and finally into an inverting schmitt trigger that adds correcting hysteresis to smooth out the output frequency. This circuit outputted beautiful signals that accurately provided pointing data, but it again suffered from the fact that the 3333 Hz signal was far brighter and would interfere with the 910 Hz signal. We also noticed that the white board reflected the signals a bit which led to messy measurements if the phototransistor was pointed too close to the ground.
+
+#### Ultrasonic Sensors (De-Scoped)
+Although we didn’t use them for the MVP or contest, we had planned on using the lab provided HC-SR04 ultrasonic sensors to determine distance to a wall and for the elevator to determine if it was in front of the upper basket. We got the sensors reading out distance but did not incorporate them into our abstracted code. Find the basic schematic on our github.
+
+#### Implementation
+We used only breadboards for all electronics, which actually worked great and allowed us to modify circuits along the way. To simplify the wiring, we heat shrinked longer wires. See our final wiring here with the beacon sensors attached at the side.
+
+![Wiring](/Website_Files/wiring.png)*We would have heat shrunk the longer wiring here used for the beacon sensors, but we abandoned these the night before the competition to simply use motor encoders*
 
 #### Software 💻
 
