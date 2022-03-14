@@ -19,19 +19,19 @@ We initially installed faster motors on our robot, however we quickly realized t
 
 #### State Machine
 ##### MVP
-<img src="Website_Files/stateMachineMVP.png" width="50%">
+![MVP_State](Website_Files/stateMachineMVP.png)
 
 ##### Competition Robot
-<img src="Website_Files/competitionDiagram.png" width="80%">
+![Final_State](Website_Files/competitionDiagram.png)
 
 ## MVP Subsystem Overviews
 #### Mechanical ⚙️
 <iframe src="https://myhub.autodesk360.com/ue2c4af35/shares/public/SH35dfcQT936092f0e431237ee60296c581d?mode=embed" width="1024" height="768" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"  frameborder="0"></iframe>
 
 ##### Chassis
-Our chassis design went through three iterations. The first iteration was very simple. It consisted of a rectangle with attachment points for the wheels and claw. By the secound iteration, we added more space for electronics which we were taping on originally. We also added a  mechanism for attaching line sensors to the bottom of the chassis. The secound iteration also had a secound layer that connected to the first layed with laser cut standoffs. While the secound iteration began looking like a robot, it was relativley messesy mechanically. The laser cut standoffs introduced signifcant play into the design and the sensors on the bottom (which were also a friction fit of laser cut pieces) kept on falling out. Additionally out electronic were still mostly mounted on a breadboard the was taped to the secound layer. Debugging became very challenging as our design increased in complexity. We designed out third iteration to address many of the pain points introduced by the secound. We started using 3D printed standoffs with bolts in order to create a more seucre attachment between the different layers. Similarly, we moved over to entirely 3D printed sensor mounts that were also attached to the chassis with bolts. In addition to the more secure attachment points, we added attachment points for the motor driver and bread board to create a more clean design and simplify debugging. We finally added a spot for the power switch and holes to pass the wires through. 
+Our chassis design went through three iterations. The first iteration was very simple. It consisted of a rectangle with attachment points for the wheels and claw. By the secound iteration, we added more space for electronics which we were taping on originally. We also added a  mechanism for attaching line sensors to the bottom of the chassis. The secound iteration also had a secound layer that connected to the first layed with laser cut standoffs. While the secound iteration began looking like a robot, it was relativley messesy mechanically. The laser cut standoffs introduced signifcant play into the design and the sensors on the bottom (which were also a friction fit of laser cut pieces) kept on falling out. Additionally out electronic were still mostly mounted on a breadboard the was taped to the secound layer. Debugging became very challenging as our design increased in complexity. We designed out third iteration to address many of the pain points introduced by the secound. We started using 3D printed standoffs with bolts in order to create a more seucre attachment between the different layers. Similarly, we moved over to entirely 3D printed sensor mounts that were also attached to the chassis with bolts. In addition to the more secure attachment points, we added attachment points for the motor driver and bread board to create a more clean design and simplify debugging. We finally added a spot for the power switch and holes to pass the wires through.
 
-<img src="Website_Files/chassis.png" width="50%">
+![Chasis](Website_Files/chassis.png)
 
 #### Electrical ⚡
 ##### Power
